@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>연구 도우미 — IRB 심의</title>
+<title>리서치 데스크 — IRB 심의</title>
 
 
 <style>
@@ -79,6 +79,16 @@
   .warn b{color:var(--flag);}
 
   /* 유형 칩 */
+  .fld.needok{border-left:3px solid var(--acc); padding-left:11px; background:linear-gradient(90deg,var(--acc-soft) 0%,transparent 60%)}
+  .okrow{display:flex; align-items:center; gap:8px; margin-top:7px; flex-wrap:wrap}
+  .okwhy{font-size:.78rem; color:var(--acc-deep)}
+  .chip.okbtn{background:var(--acc); color:#fff; border-color:var(--acc-deep); font-weight:600}
+  .tag.okdone{background:var(--acc-soft); color:var(--acc-deep); border-color:var(--acc)}
+  .presets{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:7px}
+  .presets .plab{font-size:.72rem; color:var(--muted); letter-spacing:.04em; margin-right:2px}
+  .chip.preset{background:var(--acc-soft); border-color:var(--acc); color:var(--acc-deep); font-weight:500}
+  .chip.preset:hover{background:var(--acc); color:#fff}
+  .presetwarn{color:var(--flag); margin-top:5px}
   .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:4px;}
   .chip{appearance:none; font:inherit; font-size:.86rem; cursor:pointer; background:var(--surface);
     border:1px solid var(--rule); border-radius:2px; padding:8px 13px; color:var(--ink);}
@@ -213,7 +223,7 @@
 <body>
 <div class="wrap">
   <header class="masthead">
-    <div class="mark">IRB 심의의뢰 도우미 <span>· 전남대학교병원</span></div>
+    <div class="mark">리서치 데스크 <span>· IRB 심의 · 전남대학교병원</span></div>
     <div class="who" id="who" hidden>
       <span>지금 <b id="whoName"></b>로 보고 있습니다</span>
       <button type="button" class="chip sm" id="roleSwap">바꾸기</button>
@@ -250,61 +260,37 @@
   <!-- 1 -->
   <section id="s1">
     <h1 class="step">연구계획서를 넣어 주세요</h1>
-    <p class="sub">한 건이면 충분합니다. 내용을 읽어 심의의뢰서 항목을 대신 채워 드립니다. <b>채운 값은 모두 고치실 수 있습니다.</b><br>
-      <b>계획서는 이 브라우저 밖으로 나가지 않습니다</b> — 읽는 일은 전부 이 기기 안에서 합니다.</p>
+    <p class="sub">읽어서 심의의뢰서 항목을 채워 드립니다. 채운 값은 <b>모두 고치실 수 있습니다.</b>
+      계획서는 <b>이 브라우저 밖으로 나가지 않습니다.</b></p>
     <div class="card">
-      <textarea id="plan" placeholder="연구계획서 내용을 여기에 붙여넣으세요. (한글 파일은 내용을 복사해 붙여넣으시면 됩니다)"></textarea>
+      <textarea id="plan" placeholder="여기에 붙여넣으시거나, 아래 「계획서 첨부」로 파일을 올리십시오."></textarea>
       <div class="btnrow">
         <button class="btn" id="go1" type="button">읽어서 채우기</button>
-        <label class="btn ghost" for="file" style="display:inline-block">파일 열기</label>
+        <label class="btn ghost" for="file" style="display:inline-block">계획서 첨부</label>
         <input id="file" type="file" accept=".txt,.md,.docx,.hwpx" hidden>
-        <button class="btn ghost" id="demo" type="button">예시 계획서로 둘러보기</button>
+        <button class="btn ghost" id="demo" type="button">예시로 둘러보기</button>
         <span class="spacer"></span>
         <span class="hint" id="cnt">0자</span>
       </div>
       <div class="warn">
-        <b>환자 정보는 넣지 마세요.</b> 이름·등록번호·검사 실측값은 필요 없습니다. 이 도구는 서류의 형식을 다룹니다.
+        <b>환자 이름·등록번호·검사값은 넣지 마세요.</b> 이 도구는 서류의 형식만 다룹니다.
       </div>
       <details class="more" id="aiLocalBox">
-        <summary>AI 보조를 켤 수 있습니다 — <b>이 기기 안에서 돕니다</b> (기본 꺼짐)</summary>
+        <summary>서술형 칸은 AI가 초안을 씁니다 — <b>이 컴퓨터 안에서</b> (기본 꺼짐)</summary>
         <div style="margin:10px 0 0">
           <p class="hint" style="margin:0 0 8px">
-            계획서 읽기는 <b>규칙</b>으로 합니다. 규칙이 못 하는 것이 <b>서술형 칸</b>(연구 목적·설계·방법·통계 등
-            11칸)이고, 그 자리에 AI를 쓸 수 있습니다. 3단계에서 「초안 만들기」로 켜집니다.
-          </p>
-          <p class="hint" style="margin:0 0 8px">
-            <b>계획서는 이 기기를 떠나지 않습니다.</b> AI 모델을 브라우저로 내려받아
-            이 컴퓨터의 그래픽카드로 돌립니다 — 내려오는 것은 모델이고, 올라가는 것은 없습니다.
-            처음 한 번만 받고(약 1GB), 그다음부터는 인터넷 없이도 열립니다.
+            연구 목적·설계·방법·통계 등 <b>서술형 11칸</b>에 초안을 만들어 드립니다.
+            3단계에서 「초안 만들기」를 누르면 켜집니다. 처음 한 번 모델을 내려받습니다(약 1GB).<br>
+            <b>계획서는 나가지 않습니다</b> — 내려오는 것은 모델이고, 올라가는 것은 없습니다.
           </p>
           <label class="hint" style="display:block; margin:0 0 6px">
-            모델 —
-            <select id="aiModel" style="font:inherit; padding:2px 4px"></select>
+            모델 <select id="aiModel" style="font:inherit; padding:2px 4px"></select>
+            <span id="aiProbeLine"> · <a href="ai-check.html" target="_blank" rel="noopener">이 컴퓨터에서 켜지는지 보기</a></span>
           </label>
-          <p class="hint" style="margin:0 0 8px" id="aiProbeLine">
-            이 컴퓨터에서 켜지는지 먼저 보시겠으면 —
-            <a href="ai-check.html" target="_blank" rel="noopener">AI 실행 점검</a>
-          </p>
           <p class="hint" style="margin:0">
-            🔴 <b>시연 수준입니다.</b> 작은 모델이라 한국어 의학 문서 품질은 보증되지 않습니다.
-            그래서 <b>수·기간·금액·날짜 칸은 AI가 채우지 못하게</b> 막았고,
-            초안에 계획서에 없는 숫자가 섞이면 <b>그 초안을 버립니다.</b>
-            남은 것도 연구자가 <b>채택을 누르셔야</b> 칸에 들어갑니다.
+            🔴 <b>수·기간·금액·날짜는 AI가 채우지 못합니다.</b>
+            초안에 계획서에 없는 숫자가 섞이면 그 초안을 버리고, 남은 것도 <b>채택을 누르셔야</b> 들어갑니다.
           </p>
-        </div>
-      </details>
-      <details class="more" id="aiBox">
-        <summary>외부 AI로 더 읽기 — <b>계획서가 병원 밖으로 전송됩니다</b> (기본 꺼짐)</summary>
-        <div style="margin:10px 0 0">
-          <p class="hint" style="margin:0 0 8px">
-            기본 읽기는 <b>이 기기 안에서만</b> 돕니다. 아래를 켜면 계획서 전문이 <b>외부 AI 서버로 전송</b>되어
-            더 많은 칸이 채워집니다. 서술형 항목(연구 목적·방법·통계)은 외부 AI 쪽이 잘 씁니다.<br>
-            🔴 <b>미공개 연구 내용이 기관 밖으로 나갑니다.</b> 기관 방침을 확인하신 뒤에만 켜십시오.
-          </p>
-          <label style="display:inline-flex; align-items:center; gap:8px; cursor:pointer">
-            <input type="checkbox" id="aiOpt">
-            <span>이 계획서를 외부 AI로 보내는 데 동의합니다</span>
-          </label>
         </div>
       </details>
       <details class="more">
@@ -593,7 +579,7 @@
 (function(){
   var S = {type:null, typeGuessed:false, rejected:0, route:"review", exemptKind:"인간대상연구", pre:{}, fields:{}, summary:{},
            drug:{}, cq:{}, docVer:{}, budget:{}, skipped:{}, evidence:{}, raw:"", why:"",
-           aiDraft:{}};
+           aiDraft:{}, ok:{}, auto:{}, autoWhy:{}};
   var SCHEMA = null, sampleFn = null, sampleResolved = false, dlFn = null;
   /* 외부 전송 동의는 「체크박스 + 확인 창」 둘 다여야 한다.
      전에는 요약이 체크박스만 보고 보냈다 — 확인 창에서 취소한 사람이 보낸 줄 몰랐다(Codex A-2). */
@@ -618,8 +604,7 @@
   if (HAS_CLAUDE) {
     claude.use('sample').then(function(f){ sampleFn=f; sampleResolved=true; }, function(){ sampleResolved=true; });
   } else {
-    sampleResolved = true;
-    var aiBoxEl = $('aiBox'); if (aiBoxEl) aiBoxEl.hidden = true;   // 보낼 곳이 아예 없다
+    sampleResolved = true;   // 보낼 곳이 없다 — 외부 AI 자리는 화면에 두지 않는다
   }
   function noDl(){ $('dl').hidden=true; $('revDl').hidden=true; }
   if (HAS_CLAUDE) claude.use('downloads').then(function(d){ dlFn=d; if(!d) noDl(); }, noDl);
@@ -726,7 +711,14 @@
         v = v.split(/\s{3,}|\t|\s*[│|]\s*/)[0];                       // 표의 다음 칸에서 끊는다
         v = v.split(/\s*[\/,]\s*(?=[가-힣A-Za-z ]{1,14}\s*[:：])/)[0]; // "소속: X / 직위: Y" 에서 끊는다
         v = v.replace(/^[·\-\*\s]+/,'').trim();
-        if (v && v.length <= 400){ if (used) used[i]=true; return {v:v, line:ln.trim(), idx:i}; }
+        /* 한 줄을 한 항목이 통째로 가져가면 「성명: 홍길동 / 소속: 응급의학과 / 직위: 부교수」
+           같은 줄에서 소속·직위를 놓친다. 라벨이 둘 이상 적힌 줄은 소진하지 않는다.
+           (라벨이 하나뿐인 줄을 두 항목이 나눠 갖는 것은 여전히 막는다 — Codex B-7) */
+        if (v && v.length <= 400){
+          var labelCount = (ln.match(/[가-힣A-Za-z][가-힣A-Za-z ]{0,12}\s*[:：]/g) || []).length;
+          if (used && labelCount < 2) used[i] = true;
+          return {v:v, line:ln.trim(), idx:i};
+        }
       }
     }
     return null;
@@ -1324,7 +1316,7 @@
     for (var i=0;i<LP_BLOCK.length;i++){ if (LP_BLOCK[i][0] === key){ names = LP_BLOCK[i][1]; break; } }
     if (names){
       var b = lpBlock(lines, names);
-      if (b && b.v && b.v.length > 40) return {text:b.v.slice(0, AI_CTX), found:b.line};
+      if (b && b.v && b.v.length > 20) return {text:b.v.slice(0, AI_CTX), found:b.line};
     }
     return {text:raw.slice(0, AI_CTX), found:''};
   }
@@ -1352,6 +1344,7 @@
     });
     syncDerived();
     S.rejected = rejected;
+    Object.keys(S.fields).forEach(function(k){ S.ok[k] = false; });  // 읽은 값은 확인 대상이다
     return got;
   }
 
@@ -1468,6 +1461,7 @@
     });
   }
   function renderType(){
+    S._autoDone = false;              // 종류가 바뀌면 미리 채울 것도 달라진다
     if (!SCHEMA) return;
     if (!S.type) S.type = 'medical_record';
     document.querySelectorAll('#routeChips [data-route]').forEach(function(b){
@@ -1523,7 +1517,7 @@
       return;
     }
     var head = document.createElement('tr');
-    ['','서류','제출','방법','도우미'].forEach(function(h){ var th=document.createElement('th'); th.textContent=h; head.appendChild(th); });
+    ['','서류','제출','방법','이 도구가 하는 것'].forEach(function(h){ var th=document.createElement('th'); th.textContent=h; head.appendChild(th); });
     t.appendChild(head);
     SCHEMA.docs.forEach(function(d){
       var req = d.matrix[S.type];
@@ -1767,6 +1761,20 @@
       return f.required!=='optional';
     });
   }
+  /* 보기를 넣은 뒤 그대로 두면 서류가 남의 문장으로 나간다. 그 상태를 알린다.
+     [   ] 로 비워 둔 자리는 연구자가 정할 값이다 — 도구가 채우지 않는다(§2-1). */
+  function presetWarn(presets, v){
+    var t = String(v||'').trim();
+    if (!t) return '';
+    var same = false, list = presets || [];
+    for (var i=0;i<list.length;i++){ if (String(list[i][1]).trim() === t) { same = true; break; } }
+    var holes = (t.match(/\[[^\]]*\]/g) || []).length;
+    if (same && holes) return '보기를 그대로 두셨습니다 · 아직 정하지 않은 자리가 ' + holes + '곳 있습니다';
+    if (same)          return '보기를 그대로 두셨습니다 — 연구 내용에 맞게 고쳐 주십시오';
+    if (holes)         return '아직 정하지 않은 자리가 ' + holes + '곳 있습니다 — [ ] 안을 채워 주십시오';
+    return '';
+  }
+
   function fieldRow(f, showAsk){
     var wrap = document.createElement('div'); wrap.className='fld';
     var lab = document.createElement('div'); lab.className='lab';
@@ -1778,6 +1786,25 @@
     if (f.requiredWhen){ var w=document.createElement('span'); w.className='tag'; w.textContent=f.requiredWhen; lab.appendChild(w); }
     wrap.appendChild(lab);
     if (showAsk && (f.ask||f.hint)){ var q=document.createElement('div'); q.className='ask'; q.textContent=f.ask||f.hint; wrap.appendChild(q); }
+
+    /* 도구가 채운 값은 연구자가 확인해야 한다. 확인 전에는 눈에 띄게 둔다. */
+    if (needConfirm(f)){
+      wrap.classList.add('needok');
+      var ok = document.createElement('div'); ok.className='okrow';
+      var why = document.createElement('span'); why.className='okwhy';
+      why.textContent = S.autoWhy[f.key] ? (S.autoWhy[f.key] + ' — 맞는지 봐 주십시오')
+                      : S.auto[f.key] ? '이 도구가 보기에서 넣었습니다 — 맞는지 봐 주십시오'
+                      : (S.fields[f.key] ? '계획서에서 찾은 값입니다 — 맞는지 봐 주십시오'
+                                         : '확인해 주십시오');
+      var b = document.createElement('button');
+      b.type='button'; b.className='chip sm okbtn'; b.textContent='맞습니다';
+      b.addEventListener('click', function(){ S.ok[f.key]=true; renderFields(); save(); });
+      ok.appendChild(why); ok.appendChild(b);
+      wrap.appendChild(ok);
+    } else if (getVal(f.key).trim() && S.ok[f.key]){
+      var done = document.createElement('span'); done.className='tag okdone'; done.textContent='확인함';
+      lab.appendChild(done);
+    }
 
     if (f.options && f.options.length){
       var chips = document.createElement('div'); chips.className='chips';
@@ -1795,6 +1822,7 @@
           } else {
             setVal(f.key, (now.length===1 && now[0]===opt) ? '' : opt);
           }
+          S.ok[f.key]=true; delete S.auto[f.key];
           renderFields(); save();
         });
         chips.appendChild(b);
@@ -1810,12 +1838,57 @@
           oh.textContent=f.optionHelp[opt]; wrap.appendChild(oh);
         });
       }
+    } else if (f.type==='boolean'){
+      /* 예/아니오 칸은 글로 쓰게 하지 않는다. 눌러서 고른다.
+         전에는 선택지가 없다는 이유로 빈 글쓰기 칸이 나왔다(2026-09-29 실측). */
+      var yn = document.createElement('div'); yn.className='chips';
+      ['예','아니오'].forEach(function(opt){
+        var b=document.createElement('button'); b.type='button'; b.className='chip sm';
+        b.textContent=opt;
+        b.setAttribute('aria-pressed', getVal(f.key).trim()===opt ? 'true':'false');
+        b.addEventListener('click', function(){
+          setVal(f.key, getVal(f.key).trim()===opt ? '' : opt);
+          S.ok[f.key]=true; delete S.auto[f.key];
+          renderFields(); save();
+        });
+        yn.appendChild(b);
+      });
+      wrap.appendChild(yn);
+      if (isRequired(f) && !getVal(f.key).trim()) wrap.classList.add('empty-req');
     } else if (f.type==='textarea'){
       var ta=document.createElement('textarea'); ta.value=getVal(f.key);
-      ta.addEventListener('input', function(){ setVal(f.key, ta.value); save(); markReq(); });
+      ta.addEventListener('input', function(){ setVal(f.key, ta.value); S.ok[f.key]=true; delete S.auto[f.key]; save(); markReq(); });
       ta.addEventListener('change', function(){ renderFields(); });
       wrap.appendChild(ta);
       if (isRequired(f) && !ta.value) wrap.classList.add('empty-req');
+
+      /* 보기 — 백지에서 시작하지 않게 한다. 눌러 넣고 고치면 된다. */
+      var ps = (SCHEMA.presets || {})[f.key];
+      if (ps && ps.length){
+        var pbox = document.createElement('div'); pbox.className='presets';
+        var plab = document.createElement('span'); plab.className='plab'; plab.textContent='보기';
+        pbox.appendChild(plab);
+        ps.forEach(function(pair){
+          var b=document.createElement('button'); b.type='button'; b.className='chip sm preset';
+          b.textContent = pair[0];
+          b.title = pair[1].slice(0, 120);
+          b.addEventListener('click', function(){
+            var cur = getVal(f.key).trim();
+            if (cur && cur !== pair[1] &&
+                !window.confirm('이미 쓰신 내용이 있습니다.\n보기로 바꾸시겠습니까?')) return;
+            setVal(f.key, pair[1]); S.ok[f.key]=true; delete S.auto[f.key];
+            renderFields(); save();
+          });
+          pbox.appendChild(b);
+        });
+        wrap.appendChild(pbox);
+      }
+      var pw = presetWarn(ps, getVal(f.key));
+      if (pw){
+        var pn = document.createElement('div'); pn.className='hint presetwarn';
+        pn.textContent = '🔴 ' + pw;
+        wrap.appendChild(pn);
+      }
     } else {
       var inp=document.createElement('input'); inp.type='text'; inp.value=getVal(f.key);
       var persistHint = (f.type==='date' || f.type==='number');
@@ -2130,6 +2203,15 @@
 
   function aiDraftOne(f){
     var sl = aiSlice(f.key, S.raw || '');
+    /* 🔴 계획서에 그 항목을 다룬 대목이 없으면 묻지 않는다.
+       물으면 지어낸다 — 2026-09-29에 「중지기준」이 없는 계획서에서 연구 기간을 가져다
+       말이 되지 않는 중지기준을 만들어 냈다. 숫자가 전부 원문에 있어 숫자 검사도 통과했다.
+       없는 것은 없다고 말하는 편이 맞다(§2-6). */
+    if (!sl.found){
+      S.aiDraft[f.key] = {text:'', from:'', ok:false,
+        why:'계획서에서 이 항목을 다룬 대목을 찾지 못했습니다 — 없는 내용을 지어내지 않습니다'};
+      return Promise.resolve(S.aiDraft[f.key]);
+    }
     var sys = '당신은 연구계획서의 내용을 IRB 심의의뢰서 칸으로 옮겨 적는 일을 돕습니다.'
             + ' 주어진 대목에 적혀 있는 내용만 쓰십시오.'
             + ' 대목에 없는 내용이나 숫자를 새로 만들면 안 됩니다.'
@@ -2222,9 +2304,71 @@
     });
   }
 
+  /* ── 미리 채워 두기 ────────────────────────────────────────────────
+     빈 칸을 늘어놓고 「채우십시오」 하는 것이 연구자에게 가장 큰 일이다.
+     계획서에서 읽지 못한 서술형 칸은, 연구의 성격에서 분명히 정해지는 것만
+     보기로 미리 채워 둔다. 채운 것은 「확인해 주십시오」로 표시되고,
+     연구자가 확인해야 정리본에 들어간다.
+     🔴 수·기간·금액은 채우지 않는다. 보기의 [   ] 자리로 남는다(§2-1). */
+  function autoDefaults(){
+    if (!SCHEMA || !SCHEMA.presets) return 0;
+    var P = SCHEMA.presets, n = 0;
+    function put(key, idx){
+      var f = fieldOf(key);
+      if (!f || !showField(f)) return 0;
+      if (getVal(key).trim()) return 0;            // 계획서에서 읽은 값은 건드리지 않는다
+      var ps = P[key];
+      if (!ps || !ps[idx]) return 0;
+      setVal(key, ps[idx][1]);
+      S.auto[key] = true;                          // 도구가 넣었다는 표시
+      return 1;
+    }
+    var raw = S.raw || '';
+    var 후향 = (S.type === 'medical_record' || S.type === 'biospecimen_stored'
+                || /후향|retrospective/i.test(raw));
+    var 검체 = (S.type === 'biospecimen_new' || S.type === 'biospecimen_stored'
+                || /인체유래물|검체|혈액\s*채취|조직/.test(raw));
+
+    /* 예/아니오 칸도 연구 성격에서 정해지는 것은 미리 골라 둔다.
+       왜 그렇게 보았는지를 함께 남기고, 연구자가 확인해야 한다. */
+    function pick(key, val, why){
+      var f = fieldOf(key);
+      if (!f || !showField(f)) return 0;
+      if (getVal(key).trim()) return 0;
+      setVal(key, val); S.auto[key] = true; S.autoWhy[key] = why; return 1;
+    }
+    if (후향){
+      n += pick('intervention', '아니오', '후향적 자료 검토라 중재가 없다고 보았습니다');
+      n += pick('contactSubject', '아니오', '후향적 자료 검토라 대상자와 접촉하지 않는다고 보았습니다');
+      n += pick('recruitDoc', '아니오', '대상자를 모집하지 않으므로 모집문건도 없다고 보았습니다');
+      n += pick('competitiveRecruit', '아니오', '대상자를 모집하지 않으므로 경쟁적 모집이 아니라고 보았습니다');
+    }
+    if (후향 && !검체){
+      n += pick('storeMaterial', '아니오', '계획서에 인체유래물 수집이 보이지 않았습니다');
+      n += pick('geneticInfo', '아니오', '계획서에 유전학적 정보 수집이 보이지 않았습니다');
+    }
+
+    var 중재 = getVal('intervention').trim() === '예';
+    if (!중재){ n += put('efficacy', 0); n += put('safety', 0); }
+    if (후향){ n += put('recruitMethod', 0); n += put('sampleBasis', 0); }
+    return n;
+  }
+
+  /* 값이 있는데 아직 연구자가 확인하지 않은 칸 */
+  function needConfirm(f){
+    if (!f || f.source === 'system' || f.source === 'derived') return false;
+    if (!showField(f)) return false;
+    if (!getVal(f.key).trim()) return false;
+    return !S.ok[f.key];
+  }
+  function unconfirmed(){
+    return SCHEMA.fields.filter(needConfirm);
+  }
+
   function renderFields(){
     if (!SCHEMA) return;
     syncDerived();
+    if (!S._autoDone){ autoDefaults(); S._autoDone = true; }   // 한 번만. 지운 칸을 되살리지 않는다
     var askKeys = {};
     relevantAsk().forEach(function(f){ if (!getVal(f.key).trim()) askKeys[f.key] = true; });
     var box = $('planFields'); box.textContent='';
@@ -2263,9 +2407,11 @@
     var all = SCHEMA.fields.filter(function(f){
       return isRequired(f) && f.source!=='system' && f.source!=='derived' && showField(f); }).length;
     var n = missingReq().length;
-    $('reqCount').textContent = n
+    var uc = unconfirmed().length;
+    $('reqCount').textContent = (n
       ? ('필수 ' + (all-n) + '/' + all + ' — ' + n + '개 남았습니다')
-      : ('필수 ' + all + '개를 모두 채우셨습니다');
+      : ('필수 ' + all + '개를 모두 채우셨습니다'))
+      + (uc ? '  ·  확인하실 칸 ' + uc + '개' : '  ·  모두 확인하셨습니다');
     $('reqCount').className = n ? 'hint err' : 'hint';
     var nb = $('nextReq'); if (nb) nb.hidden = (n === 0);
   }
