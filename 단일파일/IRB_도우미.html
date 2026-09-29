@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>연구 도우미 — IRB 심의</title>
 
 
@@ -204,7 +209,8 @@
   }
   @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
 </style>
-
+</head>
+<body>
 <div class="wrap">
   <header class="masthead">
     <div class="mark">IRB 심의의뢰 도우미 <span>· 전남대학교병원</span></div>
@@ -2908,6 +2914,7 @@
   }
   var $ = function(id){ return document.getElementById(id); };
   var maxStep = 1;
+  var curStep = 1;      /* 역할을 고를 때 show(curStep)을 부르므로 선언이 있어야 한다 */
 
   /* 원내 서버에 올리면 claude 객체가 없다 — 그대로 부르면 스크립트가 통째로 죽는다.
      없으면 없는 대로 돈다. 외부 AI 칸도 숨긴다. */
@@ -2918,30 +2925,6 @@
     sampleResolved = true;
     var aiBoxEl = $('aiBox'); if (aiBoxEl) aiBoxEl.hidden = true;   // 보낼 곳이 아예 없다
   }
-  /* 기기 안 AI — 쓸 수 있는 브라우저에서만 보여 준다 */
-  (function initLocalAI(){
-    var box = $('aiLocalBox');
-    if (!box) return;
-    if (aiBlocked()){ box.hidden = true; return; }      /* 켤 수 없으면 아예 보이지 않는다 */
-    if (location.protocol === 'file:'){          /* 파일 하나로 열면 점검 페이지가 없다 */
-      var pl = $('aiProbeLine'); if (pl) pl.hidden = true;
-    }
-    var sel = $('aiModel');
-    AI_MODELS.forEach(function(m){
-      var o = document.createElement('option');
-      o.value = m.id;
-      o.textContent = m.id.replace('-q4f16_1-MLC','') + ' — ' + m.mb + 'MB · ' + m.note;
-      if (m.id === localAI.model) o.selected = true;
-      sel.appendChild(o);
-    });
-    sel.addEventListener('change', function(){
-      if (localAI.model === sel.value) return;
-      localAI.model = sel.value;
-      localAI.eng = null; localAI.ready = false; localAI.pct = 0;   /* 모델을 바꾸면 다시 올린다 */
-      if (typeof renderAiCard === 'function') renderAiCard();
-    });
-  })();
-
   function noDl(){ $('dl').hidden=true; $('revDl').hidden=true; }
   if (HAS_CLAUDE) claude.use('downloads').then(function(d){ dlFn=d; if(!d) noDl(); }, noDl);
   else noDl();                                                 // 파일로 열었을 땐 브라우저가 알아서 내려받는다
@@ -4692,6 +4675,30 @@
     S.skipped[q[0].key]=true; renderFields(); save();
   });
   $('nextReq').addEventListener('click', gotoNextReq);
+  /* 기기 안 AI — 쓸 수 있는 브라우저에서만 보여 준다 */
+  (function initLocalAI(){
+    var box = $('aiLocalBox');
+    if (!box) return;
+    if (aiBlocked()){ box.hidden = true; return; }      /* 켤 수 없으면 아예 보이지 않는다 */
+    if (location.protocol === 'file:'){          /* 파일 하나로 열면 점검 페이지가 없다 */
+      var pl = $('aiProbeLine'); if (pl) pl.hidden = true;
+    }
+    var sel = $('aiModel');
+    AI_MODELS.forEach(function(m){
+      var o = document.createElement('option');
+      o.value = m.id;
+      o.textContent = m.id.replace('-q4f16_1-MLC','') + ' — ' + m.mb + 'MB · ' + m.note;
+      if (m.id === localAI.model) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.addEventListener('change', function(){
+      if (localAI.model === sel.value) return;
+      localAI.model = sel.value;
+      localAI.eng = null; localAI.ready = false; localAI.pct = 0;   /* 모델을 바꾸면 다시 올린다 */
+      if (typeof renderAiCard === 'function') renderAiCard();
+    });
+  })();
+
   $('aiRun').addEventListener('click', function(){
     var targets = aiDraftTargets();
     if (!targets.length){ msg('aiRunMsg','비어 있는 서술형 칸이 없습니다.'); return; }
@@ -5930,3 +5937,6 @@
   }catch(e){}
 })();
 </script>
+
+</body>
+</html>

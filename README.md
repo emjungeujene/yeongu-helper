@@ -4,7 +4,7 @@
 채우지 못한 것을 하나씩 물어, E-IRB 화면에 옮겨 붙일 정리본을 만듭니다.
 논문 투고 쪽은 학술지 Author Guidelines에 원고가 맞는지 대조합니다.
 
-**→ 바로 쓰기: https://EMJUNG.github.io/yeongu-helper/**
+**→ 바로 쓰기: https://emjungeujene.github.io/yeongu-helper/**
 
 ## 연구계획서는 어디로도 가지 않습니다
 
