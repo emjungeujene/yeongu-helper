@@ -1,0 +1,1970 @@
+<title>연구 도우미 — 논문 투고</title>
+<style>
+  :root{
+    --paper:#F2F5F1; --surface:#FFFFFF; --surface-2:#E8EEE8;
+    --ink:#141E1B; --muted:#586761; --rule:#CCD6CF; --rule-soft:#E2E8E3;
+    --acc:#0E6A62; --acc-deep:#0B4F49; --acc-soft:#DDEDE9;
+    --flag:#A8421F; --flag-soft:#F7E4DC; --ok:#2C7A4B;
+    --sans:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+    --serif:"Nanum Myeongjo","AppleMyungjo","Apple SD Gothic Neo",Georgia,serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+    --paper:#0D1412; --surface:#151E1B; --surface-2:#1C2724;
+    --ink:#E6EDE8; --muted:#97A7A0; --rule:#2B3934; --rule-soft:#223029;
+    --acc:#4FB9AC; --acc-deep:#8BDCD1; --acc-soft:#11302C;
+    --flag:#E0855F; --flag-soft:#33201A; --ok:#63C48A;
+  }}
+  :root[data-theme="dark"]{
+    --paper:#0D1412; --surface:#151E1B; --surface-2:#1C2724;
+    --ink:#E6EDE8; --muted:#97A7A0; --rule:#2B3934; --rule-soft:#223029;
+    --acc:#4FB9AC; --acc-deep:#8BDCD1; --acc-soft:#11302C;
+    --flag:#E0855F; --flag-soft:#33201A; --ok:#63C48A;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--paper); color:var(--ink); font-family:var(--sans); line-height:1.6;
+       -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px; margin:0 auto; padding-inline:20px; padding-block:0 64px;}
+
+  .masthead{display:flex; flex-wrap:wrap; align-items:baseline; gap:10px 16px;
+            padding-block:22px 14px; border-bottom:1px solid var(--rule);}
+  .mark{font-family:var(--serif); font-size:1.32rem; font-weight:700;}
+  .mark span{color:var(--muted); font-weight:400; font-size:.9rem;}
+  .stamp{font-family:var(--mono); font-size:.66rem; letter-spacing:.09em;
+         color:var(--flag); border:1px solid var(--flag); padding:3px 8px; border-radius:2px;}
+  .themebtn{margin-left:auto; appearance:none; font:inherit; font-size:.76rem; cursor:pointer;
+    background:none; border:1px solid var(--rule); color:var(--muted); border-radius:2px; padding:3px 9px;}
+  .themebtn:hover{border-color:var(--acc); color:var(--acc);}
+
+  .rail{display:flex; gap:4px; margin:18px 0 26px; overflow-x:auto; padding-bottom:4px;}
+  .rail button{appearance:none; font:inherit; font-size:.82rem; cursor:pointer; white-space:nowrap;
+    background:none; border:none; border-bottom:2px solid var(--rule); color:var(--muted);
+    padding:7px 13px 8px; display:flex; align-items:center; gap:7px; flex:1; justify-content:center;}
+  .rail button .n{font-family:var(--mono); font-size:.72rem;}
+  .rail button[aria-current="true"]{color:var(--acc); border-bottom-color:var(--acc); font-weight:600;}
+  .rail button.done{color:var(--ink); border-bottom-color:var(--acc-soft);}
+  .rail button:disabled{opacity:.45; cursor:default;}
+  .rail button:focus-visible{outline:2px solid var(--acc); outline-offset:2px;}
+
+  h1.step{font-family:var(--serif); font-size:clamp(1.45rem,3.6vw,1.95rem); font-weight:700;
+          margin:0 0 8px; text-wrap:balance;}
+  p.sub{margin:0 0 22px; color:var(--muted); max-width:64ch;}
+
+  .card{background:var(--surface); border:1px solid var(--rule); border-radius:3px; padding:18px;}
+  .card + .card{margin-top:14px;}
+  .card > h3{margin:0 0 4px; font-size:.95rem;}
+
+  textarea.big{width:100%; min-height:210px; font:inherit; font-size:.92rem; line-height:1.6;
+    color:var(--ink); background:var(--paper); border:1px solid var(--rule); border-radius:2px;
+    padding:12px 13px; resize:vertical;}
+  textarea.big:focus{outline:2px solid var(--acc); outline-offset:-1px;}
+
+  .btn{appearance:none; font:inherit; font-weight:600; cursor:pointer; border:none; border-radius:2px;
+       padding:11px 22px; background:var(--acc); color:#fff;}
+  :root[data-theme="dark"] .btn, :root:not([data-theme="light"]) .btn{color:#08201D;}
+  .btn:disabled{opacity:.45; cursor:default;}
+  .btn.ghost{background:none; color:var(--ink); border:1px solid var(--rule); font-weight:500;}
+  .btn.ghost:hover{border-color:var(--acc); color:var(--acc);}
+  .btn.sm{padding:6px 12px; font-size:.82rem;}
+  .btn:focus-visible{outline:2px solid var(--acc); outline-offset:3px;}
+  .btnrow{display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin-top:14px;}
+  .btnrow .spacer{flex:1;}
+
+  .hint{font-size:.83rem; color:var(--muted);}
+  .warn{background:var(--flag-soft); border-left:3px solid var(--flag); padding:11px 13px;
+        font-size:.87rem; border-radius:2px; margin-top:12px;}
+  .warn b{color:var(--flag);}
+  .note{background:var(--surface-2); border-left:3px solid var(--muted); padding:11px 13px;
+        font-size:.87rem; border-radius:2px; margin-top:12px;}
+
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:4px;}
+  .chip{appearance:none; font:inherit; font-size:.86rem; cursor:pointer; background:var(--surface);
+    border:1px solid var(--rule); border-radius:2px; padding:8px 13px; color:var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--acc); border-color:var(--acc); color:#fff; font-weight:600;}
+  :root[data-theme="dark"] .chip[aria-pressed="true"],
+  :root:not([data-theme="light"]) .chip[aria-pressed="true"]{color:#08201D;}
+  .chip:focus-visible{outline:2px solid var(--acc); outline-offset:2px;}
+  .chip.sm{font-size:.8rem; padding:5px 10px;}
+
+  .sect{margin-top:18px;}
+  .sect > h3{font-family:var(--mono); font-size:.71rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--muted); font-weight:500; margin:0 0 9px; padding-bottom:6px; border-bottom:1px solid var(--rule);}
+  .fld{padding:11px 0; border-bottom:1px solid var(--rule-soft);}
+  .fld:last-child{border-bottom:none;}
+  .fld .lab{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin-bottom:5px;}
+  .fld .lab .t{font-weight:600; font-size:.92rem;}
+  .tag{font-family:var(--mono); font-size:.64rem; letter-spacing:.05em; padding:2px 6px; border-radius:2px;
+       border:1px solid var(--rule); color:var(--muted); white-space:nowrap;}
+  .tag.req{border-color:var(--flag); color:var(--flag);}
+  .tag.auto{border-color:var(--acc); color:var(--acc);}
+  .tag.own{border-color:var(--muted); color:var(--muted);}
+  .fld .ask{font-size:.84rem; color:var(--muted); margin-bottom:6px;}
+  .fld input[type=text], .fld input[type=number], .fld textarea, .fld select{width:100%; font:inherit; font-size:.9rem;
+    color:var(--ink); background:var(--paper); border:1px solid var(--rule); border-radius:2px; padding:8px 10px;}
+  .fld textarea{min-height:66px; resize:vertical; line-height:1.55;}
+  .fld input:focus, .fld textarea:focus, .fld select:focus{outline:2px solid var(--acc); outline-offset:-1px;}
+  .fld .ev{font-size:.78rem; color:var(--muted); margin-top:5px; padding-left:9px;
+           border-left:2px solid var(--rule); font-family:var(--mono); word-break:break-word;}
+
+  details.more{margin-top:12px;}
+  details.more summary{cursor:pointer; font-size:.86rem; color:var(--acc); font-weight:500;}
+
+  table.docs{width:100%; border-collapse:collapse; font-size:.88rem;}
+  table.docs th, table.docs td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--rule-soft); vertical-align:top;}
+  table.docs th{font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+                color:var(--muted); font-weight:500;}
+  table.docs td.no{font-family:var(--mono); color:var(--muted); width:2.4em;}
+  table.docs td.num{font-family:var(--mono); white-space:nowrap;}
+  .pill{font-size:.72rem; padding:2px 8px; border-radius:2px; white-space:nowrap; display:inline-block;}
+  .pill.req{background:var(--flag-soft); color:var(--flag);}
+  .pill.cond{background:var(--surface-2); color:var(--muted);}
+  .pill.gen{background:var(--acc-soft); color:var(--acc-deep);}
+  .pill.ok{background:var(--acc-soft); color:var(--acc-deep);}
+  .pill.over{background:var(--flag-soft); color:var(--flag);}
+  .tablewrap{overflow-x:auto;}
+
+  .status{color:var(--muted); font-size:.9rem; display:flex; align-items:center; gap:9px;}
+  .err{color:var(--flag);}
+
+  ul.pre{list-style:none; margin:0; padding:0;}
+  ul.pre li{display:grid; grid-template-columns:auto 1fr; gap:11px; align-items:start;
+            padding:11px 0; border-bottom:1px solid var(--rule-soft);}
+  ul.pre li:last-child{border-bottom:none;}
+  ul.pre input[type=checkbox]{width:17px; height:17px; margin-top:3px; accent-color:var(--acc); cursor:pointer;}
+  ul.pre .t{font-weight:600; font-size:.92rem;}
+  ul.pre li.done .t{color:var(--muted);}
+  ul.pre .d{font-size:.84rem; color:var(--muted); margin-top:2px;}
+  ul.pre .ev{font-size:.77rem; color:var(--muted); margin-top:4px; padding-left:9px;
+             border-left:2px solid var(--rule); font-family:var(--mono); word-break:break-word;}
+
+  table.icmje{width:100%; border-collapse:collapse; font-size:.86rem;}
+  table.icmje th, table.icmje td{padding:7px 6px; border-bottom:1px solid var(--rule-soft); text-align:center;}
+  table.icmje th:first-child, table.icmje td:first-child{text-align:left;}
+  table.icmje th{font-family:var(--mono); font-size:.66rem; color:var(--muted); font-weight:500;}
+  table.icmje input[type=checkbox]{width:16px; height:16px; accent-color:var(--acc); cursor:pointer;}
+  table.icmje input[type=text]{width:100%; font:inherit; font-size:.86rem; color:var(--ink);
+    background:var(--paper); border:1px solid var(--rule); border-radius:2px; padding:5px 7px;}
+
+  pre.out{background:var(--paper); border:1px solid var(--rule); border-radius:2px; padding:13px;
+    font-family:var(--mono); font-size:.8rem; line-height:1.55; white-space:pre-wrap;
+    word-break:break-word; max-height:440px; overflow:auto; margin:0;}
+
+  ol.gaps{margin:0; padding-left:20px; font-size:.89rem;}
+  ol.gaps li{padding:3px 0;}
+
+  footer{margin-top:40px; padding-top:16px; border-top:1px solid var(--rule);
+         font-size:.79rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:6px 16px;}
+  a{color:var(--acc);}
+  @media (max-width:520px){
+    .wrap{padding-inline:16px;}
+    .rail button{flex:0 0 auto; padding:7px 10px 8px;}
+    .btn{padding:10px 16px;}
+  }
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="mark">논문 투고 도우미 <span>· 투고 서류 준비</span></div>
+    <button class="themebtn" id="themeBtn" type="button">화면: 자동</button>
+  </header>
+
+  <nav class="rail" id="rail" aria-label="단계">
+    <button type="button" data-go="1"><span class="n">1</span>원고 넣기</button>
+    <button type="button" data-go="2" disabled><span class="n">2</span>저널 규정</button>
+    <button type="button" data-go="3" disabled><span class="n">3</span>점검표</button>
+    <button type="button" data-go="4" disabled><span class="n">4</span>커버레터</button>
+    <button type="button" data-go="5" disabled><span class="n">5</span>투고 꾸러미</button>
+  </nav>
+
+  <!-- 1 -->
+  <section id="s1">
+    <h1 class="step">원고를 넣어 주세요</h1>
+    <p class="sub">제목·초록·저자만 붙여넣어도 되고, 원고 전문을 넣어도 됩니다. 읽어서 <b>세어야 하는 것</b>을 대신 세어 드립니다.<br>
+      <b>원고는 이 브라우저 밖으로 나가지 않습니다</b> — 이 파일에는 서버로 보내는 코드가 한 줄도 없습니다.</p>
+    <div class="card">
+      <textarea id="ms" class="big" placeholder="원고 내용을 여기에 붙여넣으세요. (워드·한글 파일은 내용을 복사해 붙여넣으시면 됩니다)"></textarea>
+      <div class="btnrow">
+        <button class="btn" id="read1" type="button">읽어서 세기</button>
+        <label class="btn ghost" for="msFile" style="display:inline-block">파일 열기 (.txt·.md)</label>
+        <input id="msFile" type="file" accept=".txt,.md,.text" hidden>
+        <button class="btn ghost" id="demo1" type="button">예시 원고로 둘러보기</button>
+        <span class="spacer"></span>
+        <span class="hint" id="msCnt">0자</span>
+      </div>
+      <div class="warn">
+        <b>환자 정보는 넣지 마세요.</b> 이름·등록번호·생년월일·연락처는 원고에도 있으면 안 됩니다.
+        이 도구는 서류의 형식만 다룹니다.
+      </div>
+      <div id="s1msg" style="margin-top:12px"></div>
+    </div>
+
+    <div class="card" id="piiCard" hidden>
+      <h3>개인정보처럼 보이는 것이 있습니다</h3>
+      <p class="hint" style="margin:0 0 10px">
+        <b>형태만 보고 셌습니다.</b> 값은 화면에 띄우지 않고, 어디에도 보내지 않습니다.
+        아래가 하나라도 있으면 <b>투고 전에 원고에서 지우십시오.</b> 잘못 걸린 것일 수도 있으니 직접 확인하십시오.
+      </p>
+      <div id="piiList"></div>
+    </div>
+
+    <div class="card" id="msCard" hidden>
+      <h3>읽은 것 — 고치실 수 있습니다</h3>
+      <p class="hint" style="margin:0 0 6px">
+        <span class="tag auto">자동</span> 원고에서 찾은 것 · <span class="tag own">직접</span> 직접 적으셔야 하는 것.
+        못 찾은 칸은 비어 있습니다 — <b>빈 칸을 제가 지어 채우지 않습니다.</b>
+      </p>
+      <div id="msFields"></div>
+    </div>
+
+    <div class="card" id="countCard" hidden>
+      <h3>세어 본 것</h3>
+      <p class="hint" style="margin:0 0 10px">숫자가 틀렸으면 직접 고치십시오. 고친 값으로 대조합니다.</p>
+      <div class="tablewrap"><table class="docs" id="countTable"></table></div>
+      <p class="hint" style="margin:10px 0 0" id="countNote"></p>
+    </div>
+
+    <div class="btnrow" id="s1next" hidden>
+      <span class="spacer"></span>
+      <button class="btn" type="button" data-go="2">저널 규정 넣기 →</button>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="s2" hidden>
+    <h1 class="step">저널과 그 저널의 규정</h1>
+    <p class="sub"><b>이 도구에는 저널 목록도, 저널 규정도 들어 있지 않습니다.</b>
+      규정은 판마다 바뀌므로 제가 외운 숫자를 쓰면 틀립니다.
+      그래서 <b>저널 홈페이지의 Author Guidelines를 붙여넣어 주시면</b>, 그 글에서만 숫자를 뽑아 대조합니다.</p>
+    <div class="card">
+      <div id="jFields"></div>
+    </div>
+    <div class="card">
+      <h3>저널 규정 붙여넣기</h3>
+      <p class="hint" style="margin:0 0 9px">
+        저널 홈페이지의 <b>Instructions for Authors / Author Guidelines</b> 전체를 복사해 붙여넣으십시오.
+        국문 규정도 읽습니다. 붙여넣지 않으셔도 다음 단계로 갈 수 있지만, <b>대조 칸이 전부 비어 있게 됩니다.</b>
+      </p>
+      <textarea id="ag" class="big" style="min-height:170px" placeholder="저널의 투고 규정을 여기에 붙여넣으세요."></textarea>
+      <div class="btnrow">
+        <button class="btn" id="read2" type="button">규정에서 숫자 뽑기</button>
+        <span class="spacer"></span>
+        <span class="hint" id="agCnt">0자</span>
+      </div>
+      <div id="s2msg" style="margin-top:12px"></div>
+    </div>
+    <div class="card" id="limCard" hidden>
+      <h3>규정에서 찾은 것</h3>
+      <p class="hint" style="margin:0 0 10px">
+        <span class="pill gen">규정에서 찾음</span> 붙여넣은 글에 있던 것 · <span class="pill cond">확인 안 됨</span> 그 글에 없던 것.
+        <b>「확인 안 됨」은 「제한이 없다」가 아닙니다</b> — 저널 홈페이지에서 확인하고 직접 적으십시오.
+      </p>
+      <div id="limFields"></div>
+    </div>
+    <div class="card" id="styleCard" hidden>
+      <h3>형식에 관한 언급</h3>
+      <p class="hint" style="margin:0 0 10px">붙여넣은 글에서 <b>그대로 오려 온 문장</b>입니다. 제가 요약하거나 바꾸지 않았습니다.</p>
+      <div id="styleList"></div>
+    </div>
+    <div class="btnrow">
+      <button class="btn ghost" type="button" data-go="1">← 뒤로</button>
+      <button class="btn" type="button" data-go="3">점검표 보기 →</button>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section id="s3" hidden>
+    <h1 class="step">점검표</h1>
+    <p class="sub"><b>세어서 판정할 수 있는 것만</b> 대조합니다. 글이 좋은지, 내용이 맞는지는 판정하지 않습니다 — 그건 사람이 봅니다.</p>
+    <div class="card">
+      <h3>셀 수 있는 것 — 내 원고 대 저널 규정</h3>
+      <p class="hint" style="margin:0 0 10px" id="checkLead"></p>
+      <div class="tablewrap"><table class="docs" id="checkTable"></table></div>
+      <p class="hint" style="margin:10px 0 0">
+        본문 단어 수는 <b>「서론」 제목부터 「참고문헌」 앞까지</b> 센 것입니다.
+        저널은 초록·참고문헌·표·그림 설명을 빼고 세라고 하는 곳도 있고, 다르게 세는 곳도 있습니다 —
+        <b>셈 기준이 다르면 이 숫자도 달라집니다.</b>
+      </p>
+    </div>
+    <div class="card">
+      <h3>섹션·진술 유무</h3>
+      <p class="hint" style="margin:0 0 10px">
+        원고에 그 제목·문장이 <b>있는지 없는지만</b> 봤습니다. 어느 섹션이 필수인지는 저널·논문 종류마다 다릅니다 —
+        <b>붙여넣은 규정에 나온 것은 따로 표시</b>해 두었습니다.
+      </p>
+      <div class="tablewrap"><table class="docs" id="sectTable"></table></div>
+    </div>
+    <div class="card">
+      <h3>보고지침 (Reporting guideline)</h3>
+      <p class="hint" style="margin:0 0 10px">
+        연구 설계에 따라 저널이 요구하는 체크리스트가 다릅니다. <b>어느 것이 해당하는지만</b> 짚어 드립니다 —
+        🔴 <b>이 도구에는 체크리스트 항목 내용이 들어 있지 않습니다.</b> 항목은 각 지침의 원문에서 받으십시오.
+      </p>
+      <div class="chips" id="guideChips"></div>
+      <div id="guideWhy" class="hint" style="margin-top:12px"></div>
+    </div>
+    <div class="card">
+      <h3>ICMJE 저자 기준 4항</h3>
+      <div class="note" style="margin-top:0">
+        <b>안내문입니다.</b> ICMJE 권고는 아래 <b>네 항을 모두 충족</b>할 때 저자로 하고,
+        일부만 충족하면 저자가 아니라 <b>감사의 글(Acknowledgments)</b>에 적도록 합니다.
+        <br>① 연구의 착상·설계, 또는 자료의 획득·분석·해석에 <b>실질적으로 기여</b>했다
+        <br>② 원고를 작성했거나, 중요한 학술적 내용을 <b>비판적으로 검토·수정</b>했다
+        <br>③ 출판될 <b>최종본을 승인</b>했다
+        <br>④ 연구의 정확성·성실성에 관한 문제가 적절히 조사·해결되도록 하는 데 동의하고, <b>연구 전체에 책임</b>을 진다
+        <br><span class="hint">출처: ICMJE 권고 「저자 기준」 — 🔴 <b>판·개정일은 ICMJE 홈페이지에서 확인하십시오.</b>
+        이 화면은 판을 적지 못합니다. 저널이 자체 기준을 두는 경우도 있습니다.</span>
+      </div>
+      <p class="hint" style="margin:12px 0 8px">
+        🔴 <b>충족 여부는 이 도구가 판정하지 않습니다.</b> 저자마다 직접 체크하십시오. 체크는 기록용이며 판정이 아닙니다.
+      </p>
+      <div class="tablewrap"><table class="icmje" id="icmjeTable"></table></div>
+      <div class="btnrow">
+        <button class="btn ghost sm" type="button" id="addAuthor">저자 한 줄 넣기</button>
+        <span class="spacer"></span>
+        <span class="hint" id="icmjeCount"></span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>이해관계 충돌 · 연구비 · 윤리 승인</h3>
+      <p class="hint" style="margin:0 0 6px">
+        여기 적은 문장은 4단계 커버레터와 5단계 정리본에 <b>그대로</b> 들어갑니다.
+        🔴 <b>제가 대신 쓰지 않습니다</b> — 없으면 「없음」이라고 적는 것도 연구자의 진술입니다.
+      </p>
+      <div id="stmtFields"></div>
+    </div>
+    <div class="btnrow">
+      <button class="btn ghost" type="button" data-go="2">← 뒤로</button>
+      <button class="btn" type="button" data-go="4">커버레터 뼈대 →</button>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section id="s4" hidden>
+    <h1 class="step">커버레터 뼈대</h1>
+    <p class="sub"><b>뼈대와 「여기에 무엇을 쓰는지」만 드립니다.</b> 문장은 연구자가 씁니다 —
+      제가 지어낸 문장을 넣으면 그건 연구자의 말이 아니고, 심사자에게 거짓이 될 수도 있습니다.<br>
+      〔 〕 표시는 <b>반드시 직접 채우셔야 하는 자리</b>입니다.</p>
+    <div class="card" id="coverCard"><div id="coverFields"></div></div>
+    <div class="card">
+      <h3>미리보기</h3>
+      <p class="hint" style="margin:0 0 10px">위에 적으신 것만 모았습니다. 빈 칸은 빈 칸으로 보입니다.</p>
+      <pre class="out" id="coverOut"></pre>
+      <div class="btnrow">
+        <button class="btn ghost" type="button" id="coverCopy">복사하기</button>
+        <button class="btn ghost" type="button" id="coverDl">.md로 내려받기</button>
+        <span class="spacer"></span>
+        <span class="hint" id="coverLeft"></span>
+      </div>
+      <div id="s4msg" style="margin-top:10px"></div>
+    </div>
+    <div class="btnrow">
+      <button class="btn ghost" type="button" data-go="3">← 뒤로</button>
+      <button class="btn" type="button" data-go="5">투고 꾸러미 →</button>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section id="s5" hidden>
+    <h1 class="step">투고 꾸러미</h1>
+    <p class="sub">낼 서류와, 아직 빈 자리입니다. <b>이 목록이 저널의 목록을 대신하지 않습니다</b> — 마지막 확인은 저널 홈페이지에서 하십시오.</p>
+    <div class="card" id="srcCard"></div>
+    <div class="card">
+      <h3>낼 서류</h3>
+      <p class="hint" style="margin:0 0 10px">
+        <span class="pill gen">규정에서 찾음</span> 붙여넣은 규정에 있던 것(오려 온 문장을 함께 둡니다) ·
+        <span class="pill cond">공통 · 확인 필요</span> 흔히 요구되는 것이지만 <b>이 저널이 요구하는지는 확인해야 합니다</b>
+      </p>
+      <ul class="pre" id="docList"></ul>
+    </div>
+    <div class="card">
+      <h3>아직 빈 자리</h3>
+      <p class="hint" style="margin:0 0 10px">여기가 비어 있으면 투고가 반송될 수 있습니다. <b>숫자가 없는 자리는 제가 채우지 않았습니다.</b></p>
+      <ol class="gaps" id="gapList"></ol>
+    </div>
+    <div class="card">
+      <h3>정리본</h3>
+      <pre class="out" id="allOut"></pre>
+      <div class="btnrow">
+        <button class="btn" type="button" id="allDl">.md로 내려받기</button>
+        <button class="btn ghost" type="button" id="allCopy">복사하기</button>
+        <span class="spacer"></span>
+        <button class="btn ghost sm" type="button" id="wipe">임시 저장 지우기</button>
+      </div>
+      <div id="s5msg" style="margin-top:10px"></div>
+    </div>
+    <div class="btnrow">
+      <button class="btn ghost" type="button" data-go="4">← 뒤로</button>
+    </div>
+  </section>
+
+  <footer>
+    <span>저널 규정은 판마다 바뀝니다 — 투고 전에 저널 홈페이지의 규정 원문을 직접 확인하십시오.</span>
+    <span>적어 넣은 것은 <b>이 브라우저에만</b> 임시 저장됩니다(localStorage). 5단계에서 지울 수 있습니다.</span>
+    <span style="font-family:var(--mono)">2026-09-29 판 · 네트워크 호출 없음</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  /* ═══════════════════════════════════════════════════════════════════════════
+     논문 투고 도우미 — 단일 HTML. 외부 호출이 없다(fetch·CDN·이미지 전부 없음).
+     규칙:
+       ⑴ 저널 규정은 「사용자가 붙여넣은 글」에서만 나온다. 프로그램 안에 저널 규정을 넣지 않는다.
+       ⑵ 값을 지어내지 않는다. 못 찾으면 빈칸 + 「저널 홈페이지에서 확인」.
+       ⑶ 판정하지 않는다 — 세어서 대조할 수 있는 것만 대조한다.
+     ═══════════════════════════════════════════════════════════════════════════ */
+
+  var $ = function(id){ return document.getElementById(id); };
+  var maxStep = 1;
+
+  var S = {
+    raw:'', ag:'',
+    ms:null,            // 원고에서 읽은 것
+    msO:{},             // 사용자가 고친 것
+    gd:null,            // 붙여넣은 규정에서 읽은 것
+    gdO:{},             // 사용자가 직접 적은 규정 값
+    journal:{name:'', type:'', source:'', checked:'', editor:''},
+    authors:[],         // [{name, c:[b,b,b,b], corr:bool}]
+    guide:'',           // 보고지침 선택
+    stmt:{coi:'', fund:'', irbName:'', irbNo:'', trialReg:''},
+    cover:{}, decl:{}, docChk:{}
+  };
+
+  /* ══════════════════ 순수 로직 — 여기부터 DOM을 만지지 않는다 ══════════════════
+     80_검증/extract.py가 이 구역의 함수·상수만 글자 그대로 꺼내 시험한다.        */
+
+  var GUIDE = {
+    CONSORT:{name:'CONSORT', scope:'무작위배정 비교임상시험'},
+    STROBE :{name:'STROBE',  scope:'관찰연구 — 코호트·환자대조군·단면연구'},
+    PRISMA :{name:'PRISMA',  scope:'체계적 문헌고찰·메타분석'},
+    STARD  :{name:'STARD',   scope:'진단정확도 연구'},
+    CARE   :{name:'CARE',    scope:'증례보고'}
+  };
+  var GUIDE_ORDER = ['PRISMA','CONSORT','STARD','CARE','STROBE'];
+  var GUIDE_HINT = {
+    PRISMA :['체계적 문헌고찰','체계적문헌고찰','메타분석','systematic review','meta-analysis','PROSPERO'],
+    CONSORT:['무작위배정','무작위 배정','randomized controlled','randomised controlled','randomly assigned',
+             'placebo-controlled','double-blind trial','parallel-group','1:1 allocation','allocation concealment'],
+    STARD  :['진단정확도','진단 정확도','diagnostic accuracy','index test','reference standard',
+             'sensitivity and specificity','민감도와 특이도'],
+    CARE   :['증례보고','증례 보고','case report','we report a case','a case of','case presentation'],
+    STROBE :['코호트','cohort','환자대조군','case-control','단면연구','cross-sectional','관찰연구',
+             'observational','retrospective review','후향적','registry-based']
+  };
+
+  var MP_SECTION = [
+    ['abstract','초록 (Abstract)','head',['^\\s*(?:\\d+\\s*[.)]\\s*)?(?:abstract|초록|요약)\\b']],
+    ['keywords','주제어 (Keywords)','head',['^\\s*(?:key\\s?words?|주제어|색인어|중심단어)\\b']],
+    ['intro','서론 (Introduction)','head',['^\\s*(?:\\d+\\s*[.)]\\s*)?(?:introduction|서\\s*론|배경\\s*및\\s*목적)\\b']],
+    ['methods','방법 (Methods)','head',['^\\s*(?:\\d+\\s*[.)]\\s*)?(?:methods?|materials and methods|patients and methods|연구\\s*방법|대상\\s*및\\s*방법|방\\s*법)\\b']],
+    ['results','결과 (Results)','head',['^\\s*(?:\\d+\\s*[.)]\\s*)?(?:results?|결\\s*과)\\b']],
+    ['discussion','고찰 (Discussion)','head',['^\\s*(?:\\d+\\s*[.)]\\s*)?(?:discussion|고\\s*찰)\\b']],
+    ['conclusion','결론 (Conclusion)','head',['^\\s*(?:\\d+\\s*[.)]\\s*)?(?:conclusions?|결\\s*론)\\b']],
+    ['references','참고문헌 (References)','head',['^\\s*(?:\\d+\\s*[.)]\\s*)?(?:references?|참고\\s*문헌)\\b']],
+    ['ack','감사의 글 (Acknowledgments)','head',['^\\s*(?:acknowledge?ments?|감사의\\s*글)\\b']],
+    ['funding','연구비 (Funding)','any',['funding','연구비','재원','grant support']],
+    ['coi','이해관계 충돌 (Conflict of interest)','any',['conflict of interest','competing interest','이해관계','이해상충','disclosure']],
+    ['ethics','윤리 승인 (IRB)','any',['institutional review board','ethics approval','ethical approval','ethics committee','irb','임상연구심의위원회','윤리위원회','심의위원회']],
+    ['consent','연구대상자 동의','any',['informed consent','written consent','consent for publication','동의를 받','동의를 얻','동의 면제']],
+    ['dataAvail','데이터 공개 진술','any',['data availability','data sharing','자료 공개','데이터 공개']],
+    ['contrib','저자 기여 진술','any',['author contribution','credit taxonomy','저자 기여']],
+    ['figLegend','그림 설명 (Figure legends)','head',['^\\s*(?:figure legends?|그림\\s*설명)\\b']],
+    ['trialReg','임상시험 등록번호','any',['clinicaltrials.gov','trial registration','cris.nih','등록번호: nct','nct0']]
+  ];
+
+  var MP_PII = [
+    ['주민등록번호 형태','\\b\\d{6}\\s?[-–]\\s?[1-4]\\d{6}\\b'],
+    ['휴대전화번호 형태','\\b01[016-9][-.\\s]?\\d{3,4}[-.\\s]?\\d{4}\\b'],
+    ['날짜 형태 (생년월일이면 지우십시오)','\\b(?:19|20)\\d{2}[-./](?:0?[1-9]|1[0-2])[-./](?:0?[1-9]|[12]\\d|3[01])\\b'],
+    ['8자리 이상 숫자 덩이 (등록번호일 수 있음)','\\b\\d{8,12}\\b'],
+    ['이메일 주소','[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}'],
+    ['환자 식별 표현','(?:등록번호|차트번호|환자번호|병록번호|medical record number|\\bMRN\\b|patient ID)']
+  ];
+
+  function mpLines(t){ return String(t||'').replace(/\r/g,'').split('\n'); }
+  function countWords(t){
+    var s = String(t||'').replace(/　/g,' ').trim();
+    if (!s) return 0;
+    var a = s.split(/\s+/), n = 0;
+    for (var i=0;i<a.length;i++) if (/[0-9A-Za-z가-힣]/.test(a[i])) n++;
+    return n;
+  }
+  function countChars(t){ return String(t||'').replace(/\s+/g,'').length; }
+
+  /* 「라벨 : 값」 한 줄에서 값을 뽑는다. 표처럼 칸이 이어지면 첫 칸만 가져온다 */
+  function mpLabel(lines, names){
+    for (var i=0;i<lines.length;i++){
+      var ln = lines[i];
+      for (var n=0;n<names.length;n++){
+        var nm = names[n], idx = ln.indexOf(nm);
+        if (idx < 0) continue;
+        var rest = ln.slice(idx + nm.length);
+        var m = rest.match(/^\s*[)\]]?\s*[:：|│]\s*(.+)$/) || rest.match(/^\s{2,}(.+)$/);
+        if (!m) continue;
+        var v = m[1].split(/\s{3,}|\t|\s*[│|]\s*/)[0].replace(/^[·\-*\s]+/,'').trim();
+        if (v && v.length <= 400) return {v:v, line:ln.trim()};
+      }
+    }
+    return null;
+  }
+  function mpIsHead(ln){
+    return /^\s*(?:\d+\s*[.)]|\d+-\d+\.|[■□▶●▪◆#]|\[|【|<)/.test(ln)
+        || /^\s*[가-힣A-Za-z][가-힣A-Za-z0-9 ·\/()]{0,24}\s*[:：]\s*$/.test(ln);
+  }
+  function mpBlock(lines, names){
+    for (var n=0;n<names.length;n++){
+    for (var i=0;i<lines.length;i++){
+      var ln = lines[i];
+      if (ln.indexOf(names[n]) < 0) continue;
+      var tail = ln.slice(ln.indexOf(names[n]) + names[n].length)
+                   .replace(/^\s*[)\]]?\s*[:：|│·]?\s*/,'').trim();
+      var out = tail ? [tail] : [];
+      for (var j=i+1;j<lines.length;j++){
+        var nx = lines[j];
+        if (!nx.trim()){ if (out.length) break; else continue; }
+        if (mpIsHead(nx) && out.length) break;
+        out.push(nx.trim());
+        if (out.join(' ').length > 700) break;
+      }
+      var v = out.join(' ').replace(/\s{2,}/g,' ').trim();
+      if (v) return {v:v, line:ln.trim()};
+    }}
+    return null;
+  }
+  function mpAround(t, idx){
+    var s = String(t||''), a = s.lastIndexOf('\n', idx) + 1, b = s.indexOf('\n', idx);
+    return s.slice(a, b < 0 ? s.length : b).trim();
+  }
+
+  function mpTitle(lines){
+    var r = mpLabel(lines, ['국문 제목','영문 제목','논문 제목','Article title','Title','제목','과제명']);
+    if (r) return r;
+    for (var i=0;i<Math.min(lines.length,10);i++){
+      var c = lines[i].replace(/^[\s\[\]■□▶●#*]+/,'').trim();
+      if (/^(?:abstract|초록|요약|authors?|저자)\b/i.test(c)) continue;
+      if (/예시 원고|가상|placeholder|인용 금지|둘러보기용/.test(c)) continue;  // 제목 후보에서 표식 줄을 뺀다
+      if (c.length >= 12 && c.length <= 250 && !/[:：]\s*$/.test(c)) return {v:c, line:lines[i].trim()};
+    }
+    return null;
+  }
+  var MP_ABS_STOP = /^\s*(?:key\s?words?|주제어|색인어|중심단어|introduction|서\s*론|\d+\s*[.)]\s*(?:introduction|서\s*론)|references?|참고\s*문헌)\b/i;
+  function mpAbstract(lines){
+    for (var i=0;i<lines.length;i++){
+      var m = lines[i].match(/^\s*(?:\d+\s*[.)]\s*)?(?:abstract|초록|요약|summary)\s*[:：]?\s*(.*)$/i);
+      if (!m) continue;
+      var out = m[1].trim() ? [m[1].trim()] : [], blanks = 0;
+      for (var j=i+1;j<lines.length;j++){
+        var nx = lines[j];
+        if (MP_ABS_STOP.test(nx)) break;
+        if (!nx.trim()){ blanks++; if (blanks >= 2 && out.join(' ').length > 40) break; continue; }
+        blanks = 0;
+        out.push(nx.trim());
+        if (out.join(' ').length > 7000) break;
+      }
+      var v = out.join(' ').replace(/\s{2,}/g,' ').trim();
+      if (v.length >= 40) return {v:v, line:lines[i].trim()};
+    }
+    return null;
+  }
+  function mpKeywords(lines){
+    for (var i=0;i<lines.length;i++){
+      var m = lines[i].match(/^\s*(?:key\s?words?|주제어|색인어|중심단어)\s*[:：]?\s*(.+)$/i);
+      if (!m) continue;
+      var arr = m[1].split(/[;,·、]|\s{3,}/), out = [];
+      for (var j=0;j<arr.length;j++){
+        var v = arr[j].replace(/\.$/,'').trim();
+        if (v && v.length < 60) out.push(v);
+      }
+      if (out.length) return {list:out, line:lines[i].trim()};
+    }
+    return null;
+  }
+  function mpAuthors(lines){
+    var r = mpLabel(lines, ['Authors','Author','저자명','저자','공동저자']);
+    if (!r) return null;
+    var arr = String(r.v).split(/[,;·]|\s+and\s+/i), out = [];
+    for (var i=0;i<arr.length;i++){
+      var v = arr[i].replace(/\([^)]*\)/g,'').replace(/[0-9*†‡§¶]/g,'').replace(/[.]$/,'').trim();
+      if (v.length >= 2 && v.length <= 40) out.push(v);
+    }
+    return out.length ? {list:out, line:r.line} : null;
+  }
+  function mpRefCount(lines){
+    var start = -1, i, j;
+    for (i=0;i<lines.length;i++)
+      if (/^\s*(?:\d+\s*[.)]\s*)?(?:references?|참고\s*문헌|bibliography|literature cited)\s*[:：]?\s*$/i.test(lines[i])) start = i;
+    if (start < 0)
+      for (i=0;i<lines.length;i++)
+        if (/^\s*(?:references?|참고\s*문헌)\b/i.test(lines[i])) { start = i; break; }
+    if (start < 0) return {n:0, last:0, line:''};
+    var seen = {}, n = 0, last = 0;
+    for (j=start+1;j<lines.length;j++){
+      var m = lines[j].match(/^\s*(?:\[(\d{1,3})\]|\((\d{1,3})\)|(\d{1,3})\s*[.)])\s*\S/);
+      if (!m) continue;
+      var num = +(m[1] || m[2] || m[3]);
+      if (!seen[num]){ seen[num] = 1; n++; if (num > last) last = num; }
+    }
+    return {n:n, last:last, line:(lines[start]||'').trim()};
+  }
+  function mpFigTab(t){
+    var s = String(t||''), fig={}, tab={}, sf={}, st={}, m;
+    var re = /(^|[^가-힣A-Za-z])(supplement\w*|보충|부록)?\s*(figures?|figs?\.?|그림|tables?|표)\s*([Ss](?=\d))?\s*(\d{1,2})\b/gi;
+    var low = s;
+    while ((m = re.exec(low))){
+      var sup = !!m[2] || !!m[4];
+      var isFig = /^(?:figure|fig|그림)/i.test(m[3]);
+      var box = isFig ? (sup ? sf : fig) : (sup ? st : tab);
+      box[m[5]] = 1;
+    }
+    return {figures:Object.keys(fig).length, tables:Object.keys(tab).length,
+            suppFigures:Object.keys(sf).length, suppTables:Object.keys(st).length};
+  }
+  function mpSections(t, lines){
+    var out = {};
+    for (var i=0;i<MP_SECTION.length;i++){
+      var row = MP_SECTION[i], key = row[0], mode = row[2], pats = row[3], hit = '';
+      for (var p=0;p<pats.length && !hit;p++){
+        if (mode === 'any'){
+          var re = new RegExp(pats[p],'i'), m = t.match(re);
+          if (m) hit = mpAround(t, m.index);
+        } else {
+          var rh = new RegExp(pats[p],'i');
+          for (var j=0;j<lines.length;j++) if (rh.test(lines[j])){ hit = lines[j].trim(); break; }
+        }
+      }
+      out[key] = {found: !!hit, line: hit.slice(0,180)};
+    }
+    return out;
+  }
+  function mpDesign(t){
+    var s = String(t||''), low = s.toLowerCase(), hits = {}, pick = '', i, k;
+    for (i=0;i<GUIDE_ORDER.length;i++){
+      var g = GUIDE_ORDER[i], arr = GUIDE_HINT[g];
+      for (k=0;k<arr.length;k++){
+        var idx = low.indexOf(String(arr[k]).toLowerCase());
+        if (idx >= 0 && !hits[g]) hits[g] = {word:arr[k], line:mpAround(s, idx)};
+      }
+    }
+    for (i=0;i<GUIDE_ORDER.length;i++) if (hits[GUIDE_ORDER[i]]){ pick = GUIDE_ORDER[i]; break; }
+    return {pick:pick, hits:hits};
+  }
+  function mpPII(t){
+    var s = String(t||''), out = [];
+    for (var i=0;i<MP_PII.length;i++){
+      var m = s.match(new RegExp(MP_PII[i][1],'g'));
+      if (m && m.length) out.push({label:MP_PII[i][0], n:m.length});
+    }
+    return out;
+  }
+  function mpBodyWords(lines){
+    var a = -1, b = lines.length, i;
+    for (i=0;i<lines.length;i++){
+      if (a < 0 && /^\s*(?:\d+\s*[.)]\s*)?(?:introduction|서\s*론|배경\s*및\s*목적)\b/i.test(lines[i])) a = i;
+      if (/^\s*(?:\d+\s*[.)]\s*)?(?:references?|참고\s*문헌)\s*[:：]?\s*$/i.test(lines[i])) b = i;
+    }
+    if (a < 0) return {n:0, from:'', to:''};
+    return {n:countWords(lines.slice(a, b).join(' ')), from:(lines[a]||'').trim(), to:(lines[b]||'').trim()};
+  }
+
+  function parseManuscript(raw){
+    var t = String(raw||''), lines = mpLines(t), M = {};
+    var ti = mpTitle(lines), ab = mpAbstract(lines), kw = mpKeywords(lines), au = mpAuthors(lines);
+    var co = mpLabel(lines, ['Corresponding author','Corresponding Author','교신저자','책임저자']);
+    var af = mpBlock(lines, ['Affiliations','Affiliation','소속']);
+    var rc = mpRefCount(lines), ft = mpFigTab(t), bw = mpBodyWords(lines);
+    M.title = ti ? ti.v : '';
+    M.abstract = ab ? ab.v : '';
+    M.keywords = kw ? kw.list : [];
+    M.authors = au ? au.list : [];
+    M.corresponding = co ? String(co.v).split(/[,;]/)[0].trim() : '';
+    M.affiliation = af ? af.v.slice(0,400) : '';
+    M.refCount = rc.n; M.refLast = rc.last;
+    M.figures = ft.figures; M.tables = ft.tables;
+    M.suppFigures = ft.suppFigures; M.suppTables = ft.suppTables;
+    M.bodyWords = bw.n; M.bodyFrom = bw.from;
+    M.totalWords = countWords(t);
+    M.sections = mpSections(t, lines);
+    M.design = mpDesign(t);
+    M.pii = mpPII(t);
+    M.evidence = {title: ti?ti.line:'', abstract: ab?ab.line:'', keywords: kw?kw.line:'',
+                  authors: au?au.line:'', refs: rc.line, body: bw.from};
+    return M;
+  }
+
+  /* ── 붙여넣은 저널 규정 읽기 ─────────────────────────────────────────────
+     🔴 규정은 여기서만 나온다. 프로그램 안에 어떤 저널의 숫자도 넣지 않았다. */
+
+  var GD_RULES = [
+    {key:'bodyWords', label:'본문 분량', unit:'단어', ug:0,
+     ban:'abstract|초록|요약|summary|title|제목|legend|설명',
+     pats:['(?:main\\s*text|manuscript|article|the text|body)[^.]{0,120}?(?:must not exceed|should not exceed|not exceed|no more than|maximum of|maximum|max\\.?|up to|limited to|within)\\s*([0-9][0-9,]{2,6})\\s*words',
+           '(?:본문|원고)[^.]{0,30}?([0-9][0-9,]{2,6})\\s*(?:단어|words)[^.]{0,14}?(?:이내|이하|넘지\\s*않|미만|까지)',
+           'word\\s*(?:count|limit)[^0-9]{0,24}([0-9][0-9,]{2,6})',
+           '([0-9][0-9,]{2,6})\\s*words?\\s*(?:maximum|max\\.?|or fewer|or less)',
+           '(?:reports?|articles?|manuscripts?|papers?|letters?|reviews?)\\s*(?:are|is)?\\s*(?:limited to|restricted to|must not exceed|not exceed|no more than)\\s*([0-9][0-9,]{2,6})\\s*words']},
+    {key:'abstractWords', label:'초록 분량', unit:'단어', ug:2,
+     ban:'title|제목|reference|참고문헌|body|본문|figure|table',
+     pats:['(?:abstract|초록)[^.]{0,120}?(?:must not exceed|should not exceed|not exceed|no more than|maximum of|maximum|max\\.?|up to|limited to|within)\\s*([0-9]{2,4})\\s*(words|characters|자|단어)?',
+           '([0-9]{2,4})[-\\s](word|character)\\s+(?:structured\\s+|unstructured\\s+)?abstract',
+           '(?:초록|요약)[^.]{0,30}?([0-9]{2,4})\\s*(단어|words|자)[^.]{0,12}?(?:이내|이하|넘지\\s*않|까지)']},
+    {key:'titleChars', label:'제목 길이', unit:'자', ug:0,
+     ban:'abstract|초록|running|reference',
+     pats:['(?:title|제목)[^.]{0,80}?(?:must not exceed|should not exceed|not exceed|no more than|maximum of|maximum|up to|limited to|within)\\s*([0-9]{1,3})\\s*(?:characters|letters|자)',
+           '([0-9]{1,3})[-\\s](?:character|letter)\\s+title',
+           '제목[^.]{0,20}?([0-9]{1,3})\\s*자[^.]{0,10}?(?:이내|이하|까지)']},
+    {key:'titleWords', label:'제목 단어수', unit:'단어', ug:0,
+     ban:'abstract|초록|running|reference',
+     pats:['(?:title|제목)[^.]{0,80}?(?:must not exceed|should not exceed|not exceed|no more than|maximum of|maximum|up to|limited to|within)\\s*([0-9]{1,3})\\s*words',
+           '([0-9]{1,3})[-\\s]word\\s+title']},
+    {key:'refs', label:'참고문헌 수', unit:'개', ug:0,
+     ban:'figure|table|word|abstract|초록',
+     /* 「references」라는 낱말만 보고 잡으면 「Figures, tables and references」 같은 소제목 뒤의
+        엉뚱한 숫자를 물어 온다 — 2026-09-24 시험에서 실제로 5를 물어 왔다.
+        그래서 ⑴ 숫자 바로 뒤에 references가 오거나 ⑵ 「reference list」가 앞에 붙은 것만 본다. */
+     pats:['(?:not exceed|no more than|maximum of|maximum|up to|limited to|restricted to)\\s*([0-9]{1,3})\\s*references',
+           '(?:reference list|list of references)[^.]{0,60}?(?:is limited to|limited to|must not exceed|not exceed|no more than|maximum of|up to)\\s*([0-9]{1,3})',
+           '([0-9]{1,3})\\s*references\\s*(?:maximum|max\\.?|or fewer)',
+           '참고문헌은?\\s*(?:모두\\s*)?([0-9]{1,3})\\s*(?:개|편)[^.]{0,10}?(?:이내|이하|까지)']},
+    {key:'figures', label:'그림 수', unit:'개', ug:0,
+     ban:'word|abstract|reference|참고문헌',
+     pats:['(?:maximum of|no more than|up to|limited to|not exceed)\\s*([0-9]{1,2})\\s*figures',
+           '([0-9]{1,2})\\s*figures[^.]{0,24}?(?:maximum|max\\.?|or fewer)',
+           '그림은?\\s*([0-9]{1,2})\\s*(?:개|점|장)[^.]{0,18}?(?:까지|이내|이하)']},
+    {key:'tables', label:'표 수', unit:'개', ug:0,
+     ban:'word|abstract|reference|참고문헌',
+     pats:['(?:maximum of|no more than|up to|limited to|not exceed)\\s*([0-9]{1,2})\\s*tables',
+           '(?:and|,)\\s*([0-9]{1,2})\\s*tables',
+           '표는?\\s*([0-9]{1,2})\\s*(?:개|점|장)[^.]{0,18}?(?:까지|이내|이하)']},
+    {key:'figTabTotal', label:'그림+표 합계', unit:'개', ug:0, ban:'word|abstract',
+     pats:['(?:total of|combined|no more than|maximum of|up to)\\s*([0-9]{1,2})\\s*(?:figures and tables|tables and figures|display items|exhibits)',
+           '그림과?\\s*표를?\\s*(?:합쳐|합해)[^0-9]{0,10}([0-9]{1,2})\\s*(?:개|점)']},
+    {key:'decisionDays', label:'1차 결정까지', unit:'', ug:2, ban:'',
+     pats:['(?:first decision|initial decision|first editorial decision)[^.]{0,60}?(?:within|in|about)\\s*([0-9]{1,3})\\s*(business days|working days|days|weeks)',
+           '([0-9]{1,3})\\s*(business days|working days|days|weeks)[^.]{0,40}?(?:first decision|initial decision)',
+           '(?:심사\\s*기간|1차\\s*심사|첫\\s*결정)[^.]{0,24}?([0-9]{1,3})\\s*(일|주)']}
+  ];
+
+  var GD_DOC = [
+    ['coverLetter','커버레터 (Cover letter)',['cover letter','커버레터','표지 편지']],
+    ['titlePage','표제지 (Title page)',['title page','표제지','제목 페이지','표지(title']],
+    ['blinded','블라인드 원고 (저자 정보 뺀 본문)',['blinded manuscript','anonymis','anonymiz','블라인드 원고']],
+    ['highlights','Highlights',['highlights']],
+    ['graphAbs','Graphical abstract',['graphical abstract','그래픽 초록']],
+    ['credit','저자 기여 진술 (CRediT 등)',['author contribution','credit','저자 기여']],
+    ['orcid','ORCID',['orcid']],
+    ['copyright','저작권 이양·라이선스 서식',['copyright transfer','license to publish','publishing agreement','저작권 이양']],
+    ['authorForm','저자 동의·서명 서식',['author agreement','authorship form','signed by all authors','전 저자 서명','저자 동의서']],
+    ['coi','이해관계 충돌 진술',['conflict of interest','competing interest','disclosure of interest','이해관계 충돌','이해상충']],
+    ['funding','연구비 표기',['funding statement','funding source','role of the funding','연구비 표기','연구비']],
+    ['ethics','윤리 승인 진술 (IRB)',['ethics approval','ethical approval','institutional review board','irb','윤리위원회','임상연구심의위원회']],
+    ['consent','연구대상자 동의 진술',['informed consent','patient consent','동의 진술','동의서']],
+    ['dataAvail','데이터 공개 진술',['data availability','data sharing','자료 공개','데이터 공개']],
+    ['checklist','보고지침 체크리스트',['reporting checklist','strobe','consort','prisma','stard','care checklist','equator','보고지침']],
+    ['reviewers','추천·제외 심사위원',['suggested reviewer','preferred reviewer','recommend reviewer','opposed reviewer','추천 심사위원','심사위원 추천']],
+    ['trialReg','임상시험 등록번호',['trial registration','clinicaltrials.gov','임상시험 등록']],
+    ['supp','보충 자료 (Supplementary)',['supplementary material','supplemental material','supporting information','보충 자료','부록']],
+    ['permission','전재 허락',['permission to reproduce','reuse permission','전재 허락']],
+    ['arrive','동물실험 보고지침 (ARRIVE)',['arrive guideline','animal research','동물실험']]
+  ];
+
+  var GD_STYLE = [
+    ['refStyle','참고문헌 형식',['vancouver','ama style','apa style','harvard style','nlm style',
+      'numbered in order of appearance','superscript','author-date','밴쿠버','번호 순']],
+    ['absStructure','초록 구조',['structured abstract','unstructured abstract','구조화 초록',
+      'background, methods, results','objective, methods, results','headings background']],
+    ['spacing','줄간격·줄번호',['double-spaced','double spaced','line numbers','line numbering','1.5 line','줄번호','줄 간격']],
+    ['fileFormat','파일 형식·해상도',['microsoft word','.docx','latex','tiff','300 dpi','600 dpi','eps','hwp','한글 파일']],
+    ['blindReview','심사 방식',['double-blind peer review','single-blind','open peer review','이중 눈가림','블라인드 심사']]
+  ];
+
+  var GD_NEG = /\bat least\b|\bno fewer\b|\bminimum\b|이상|최소/i;
+
+  function gdFlat(t){ return String(t||'').replace(/\s+/g,' ').trim(); }
+  function gdSentence(flat, idx){
+    var a = 0, b = flat.length, i, c;
+    for (i = idx; i > 0 && idx - i < 320; i--){
+      c = flat.charAt(i-1);
+      if ((c === '.' || c === '!' || c === '?' || c === '。') && flat.charAt(i) === ' '){ a = i+1; break; }
+      if (c === '•'){ a = i; break; }
+    }
+    for (i = idx; i < flat.length && i - idx < 320; i++){
+      c = flat.charAt(i);
+      if (c === '.' || c === '!' || c === '?' || c === '。'){ b = i+1; break; }
+    }
+    return flat.slice(a, b).trim().slice(0, 240);
+  }
+  function gdUnit(u, def){
+    var s = String(u||'').toLowerCase();
+    if (/word|단어/.test(s)) return '단어';
+    if (/char|letter|자/.test(s)) return '자';
+    if (/week|주/.test(s)) return '주';
+    if (/day|일/.test(s)) return '일';
+    return def || '';
+  }
+  function gdAll(flat, rule){
+    var out = [], ban = rule.ban ? new RegExp(rule.ban,'i') : null, i, k, m;
+    for (i=0;i<rule.pats.length;i++){
+      var re = new RegExp(rule.pats[i],'gi');
+      while ((m = re.exec(flat))){
+        /* 걸러낸 자리는 「그 자리부터 한 칸」만 물러난다. 한 덩이를 통째로 건너뛰면
+           그 안에 들어 있던 진짜 값(예: 「Title and abstract The title … 120 characters」의 120)을
+           잃는다 — 2026-09-24 시험에서 실제로 잃었다. */
+        if ((ban && ban.test(m[0])) || GD_NEG.test(m[0])){ re.lastIndex = m.index + 1; continue; }
+        var v = String(m[1]||'').replace(/,/g,'');
+        if (!v){ re.lastIndex = m.index + 1; continue; }
+        var dup = false;
+        for (k=0;k<out.length;k++) if (out[k].value === v) dup = true;
+        if (dup) continue;
+        out.push({value:v, unit:gdUnit(rule.ug ? m[rule.ug] : '', rule.unit), ev:gdSentence(flat, m.index)});
+        if (out.length >= 4) return out;
+      }
+    }
+    return out;
+  }
+  function gdKeywords(flat){
+    var R = [['([0-9]{1,2})\\s*(?:to|[-–~])\\s*([0-9]{1,2})\\s*key\\s?words', 1, 2],
+             ['key\\s?words?[^.]{0,40}?([0-9]{1,2})\\s*(?:to|[-–~])\\s*([0-9]{1,2})', 1, 2],
+             ['(?:주제어|색인어|중심단어)[^.]{0,20}?([0-9]{1,2})\\s*[~\\-–]\\s*([0-9]{1,2})\\s*개', 1, 2],
+             ['(?:no more than|up to|maximum of|maximum)\\s*([0-9]{1,2})\\s*key\\s?words', 0, 1],
+             ['key\\s?words?[^.]{0,40}?(?:no more than|up to|maximum of)\\s*([0-9]{1,2})', 0, 1],
+             ['(?:주제어|색인어|중심단어)[^.]{0,20}?([0-9]{1,2})\\s*개[^.]{0,10}?(?:이내|이하|까지)', 0, 1]];
+    for (var i=0;i<R.length;i++){
+      var m = flat.match(new RegExp(R[i][0],'i'));
+      if (!m) continue;
+      return {min: R[i][1] ? m[R[i][1]] : '', max: m[R[i][2]], ev: gdSentence(flat, m.index)};
+    }
+    return null;
+  }
+  function gdFind(flat, words){
+    var low = flat.toLowerCase(), out = [], first = -1;
+    for (var i=0;i<words.length;i++){
+      var k = low.indexOf(String(words[i]).toLowerCase());
+      if (k >= 0){ out.push(words[i]); if (first < 0) first = k; }
+    }
+    return out.length ? {words:out, ev:gdSentence(flat, first)} : null;
+  }
+  function gdFees(flat){
+    var pats = ['(?:article processing charge|processing charge|\\bAPC\\b|publication fee|page charge|open access fee|submission fee|게재료|심사료)[^.]{0,90}?((?:US\\s?)?[$€£₩]|USD|EUR|GBP|KRW|원)\\s?([0-9][0-9,.]{1,9})',
+                '([0-9][0-9,.]{1,9})\\s*(원|USD|EUR|GBP)[^.]{0,50}?(?:게재료|심사료|charge|fee)'];
+    var m = flat.match(new RegExp(pats[0],'i'));
+    if (m) return {currency:m[1], amount:m[2], ev:gdSentence(flat, m.index)};
+    m = flat.match(new RegExp(pats[1],'i'));
+    if (m) return {currency:m[2], amount:m[1], ev:gdSentence(flat, m.index)};
+    return null;
+  }
+  function parseGuidelines(raw){
+    var flat = gdFlat(raw);
+    var G = {has: flat.length > 0, len: flat.length, limits:{}, alts:{}, docs:[], style:{}, fees:null};
+    if (!G.has) return G;
+    for (var i=0;i<GD_RULES.length;i++){
+      var all = gdAll(flat, GD_RULES[i]);
+      if (!all.length) continue;
+      G.limits[GD_RULES[i].key] = all[0];
+      if (all.length > 1) G.alts[GD_RULES[i].key] = all.slice(1);
+    }
+    var kw = gdKeywords(flat);
+    if (kw) G.limits.keywords = {value:kw.max, min:kw.min, unit:'개', ev:kw.ev, range:true};
+    for (i=0;i<GD_DOC.length;i++){
+      var f = gdFind(flat, GD_DOC[i][2]);
+      if (f) G.docs.push({key:GD_DOC[i][0], label:GD_DOC[i][1], words:f.words, ev:f.ev});
+    }
+    for (i=0;i<GD_STYLE.length;i++){
+      var s = gdFind(flat, GD_STYLE[i][2]);
+      if (s) G.style[GD_STYLE[i][0]] = {label:GD_STYLE[i][1], words:s.words, ev:s.ev};
+    }
+    G.fees = gdFees(flat);
+    return G;
+  }
+
+  /* ── 세기·대조 ───────────────────────────────────────────────────────── */
+
+  function msCounts(S2){
+    var m = S2.ms || {}, o = S2.msO || {};
+    function pick(k, d){ var v = o[k]; return (v !== undefined && String(v).trim() !== '') ? v : d; }
+    function n(k, d){
+      var v = o[k];
+      if (v === undefined || String(v).trim() === '') return d;
+      var s = String(v).replace(/[^0-9]/g,'');
+      return s === '' ? d : +s;
+    }
+    var title = String(pick('title', m.title || ''));
+    var abs = String(pick('abstract', m.abstract || ''));
+    var kwRaw = o.keywords;
+    var kws;
+    if (kwRaw !== undefined && String(kwRaw).trim() !== ''){
+      kws = [];
+      var a = String(kwRaw).split(/[;,·]/);
+      for (var i=0;i<a.length;i++) if (a[i].trim()) kws.push(a[i].trim());
+    } else kws = (m.keywords || []).slice();
+    return {
+      title:title, titleChars:title.length, titleCharsNS:countChars(title), titleWords:countWords(title),
+      abstract:abs, abstractWords:countWords(abs), abstractChars:countChars(abs),
+      keywords:kws, keywordCount:kws.length,
+      refCount:n('refCount', m.refCount || 0),
+      figures:n('figures', m.figures || 0),
+      tables:n('tables', m.tables || 0),
+      bodyWords:n('bodyWords', m.bodyWords || 0),
+      manual:{refCount:!!(o.refCount), figures:!!(o.figures), tables:!!(o.tables), bodyWords:!!(o.bodyWords)}
+    };
+  }
+  function effLimit(G, over, key){
+    var o = over && over[key] !== undefined ? String(over[key]).trim() : '';
+    var known = (G && G.limits && G.limits[key]) ? G.limits[key] : null;
+    /* 직접 적으셔도 단위는 규정에서 읽은 것을 그대로 쓴다 — 「자」로 재는 저널에서
+       숫자만 고치면 단어와 자를 섞어 판정하게 된다. 규정이 없으면 단위는 비운다. */
+    if (o !== '') return {value:o.replace(/[^0-9]/g,''), unit:(known ? (known.unit||'') : ''), src:'직접', ev:''};
+    if (known && String(known.value).trim() !== '')
+      return {value:String(known.value), unit:known.unit||'', src:'규정', ev:known.ev||'', min:known.min||''};
+    return {value:'', unit:'', src:'', ev:''};
+  }
+  function checkRows(C, G, over){
+    var rows = [];
+    function toN(x){ var s = String(x==null?'':x).replace(/,/g,''); return /^[0-9]+$/.test(s) ? +s : null; }
+    function row(label, mineN, mineText, key, note){
+      var lim = effLimit(G, over, key), L = toN(lim.value), verdict = 'none', gap = '';
+      if (L === null) verdict = 'none';
+      else if (mineN === null) verdict = 'unknown';
+      else if (mineN > L){ verdict = 'over'; gap = '+' + (mineN - L); }
+      else verdict = 'ok';
+      rows.push({key:key, label:label, mine:mineText, mineN:mineN,
+                 rule:(L===null?'':String(L) + (lim.unit||'')), src:lim.src, ev:lim.ev,
+                 verdict:verdict, gap:gap, note:note||''});
+    }
+    var absUnit = (effLimit(G, over, 'abstractWords').unit || '단어');
+    row('제목 길이', C.titleChars, C.titleChars + '자(공백 포함) · ' + C.titleWords + '단어',
+        'titleChars', '저널이 「단어」로 재면 아래 줄을 보십시오');
+    row('제목 단어수', C.titleWords, C.titleWords + '단어', 'titleWords', '');
+    if (absUnit === '자')
+      row('초록 분량', C.abstractChars, C.abstractChars + '자(공백 제외) · ' + C.abstractWords + '단어',
+          'abstractWords', '자 수는 공백을 빼고 셌습니다 — 저널이 공백을 넣어 세면 값이 다릅니다');
+    else
+      row('초록 분량', C.abstractWords, C.abstractWords + '단어 · ' + C.abstractChars + '자(공백 제외)',
+          'abstractWords', '');
+    var kwLim = effLimit(G, over, 'keywords'), kMin = toN(kwLim.min), kMax = toN(kwLim.value);
+    var kv = 'none', kgap = '';
+    if (kMax !== null){
+      if (C.keywordCount > kMax){ kv = 'over'; kgap = '+' + (C.keywordCount - kMax); }
+      else if (kMin !== null && C.keywordCount < kMin){ kv = 'under'; kgap = '-' + (kMin - C.keywordCount); }
+      else kv = 'ok';
+    }
+    rows.push({key:'keywords', label:'주제어 개수', mine:C.keywordCount + '개', mineN:C.keywordCount,
+               rule:(kMax===null?'':((kMin!==null?kMin + '~':'최대 ') + kMax + '개')),
+               src:kwLim.src, ev:kwLim.ev, verdict:kv, gap:kgap, note:''});
+    row('본문 단어수', C.bodyWords || null, (C.bodyWords ? C.bodyWords + '단어' : '못 셌습니다'),
+        'bodyWords', '「서론」부터 「참고문헌」 앞까지 센 것입니다');
+    row('참고문헌 수', C.refCount, C.refCount + '개', 'refs', '');
+    row('그림 수', C.figures, C.figures + '개', 'figures', '');
+    row('표 수', C.tables, C.tables + '개', 'tables', '');
+    var ftLim = effLimit(G, over, 'figTabTotal');
+    if (ftLim.value) row('그림+표 합계', C.figures + C.tables, (C.figures + C.tables) + '개', 'figTabTotal', '');
+    return rows;
+  }
+  function sectRows(S2){
+    var m = S2.ms || {}, sec = m.sections || {}, G = S2.gd || {limits:{}, docs:[]}, rows = [];
+    var inGuide = {};
+    for (var i=0;i<(G.docs||[]).length;i++) inGuide[G.docs[i].key] = G.docs[i];
+    var MAP = {funding:'funding', coi:'coi', ethics:'ethics', consent:'consent',
+               dataAvail:'dataAvail', contrib:'credit', trialReg:'trialReg'};
+    for (i=0;i<MP_SECTION.length;i++){
+      var key = MP_SECTION[i][0], label = MP_SECTION[i][1], s = sec[key] || {found:false, line:''};
+      var gk = MAP[key], g = gk ? inGuide[gk] : null;
+      rows.push({key:key, label:label, found:!!s.found, line:s.line || '',
+                 inGuide:!!g, guideEv:g ? g.ev : ''});
+    }
+    return rows;
+  }
+
+  /* ── 커버레터 뼈대 ───────────────────────────────────────────────────── */
+
+  var COVER = [
+    {key:'to', label:'수신 — 편집장', req:true,
+     ask:'저널 홈페이지의 Editorial Board에서 편집장 성명·직함을 확인해 적으십시오. 모르면 「Editor-in-Chief」로 둡니다.'},
+    {key:'intro', label:'무엇을 투고하는가', req:true,
+     ask:'제목과 논문 종류를 한 문장으로. 1·2단계에 적으신 값으로 틀을 만들어 드립니다.'},
+    {key:'why', label:'왜 이 저널인가', req:false,
+     ask:'이 연구가 이 저널의 범위·독자에 왜 맞는지 1~2문장. 🔴 연구자만 쓸 수 있는 내용입니다.'},
+    {key:'finding', label:'핵심 발견', req:true,
+     ask:'결과를 1~3문장. 🔴 숫자는 원고의 표·그림에서 그대로 옮기십시오 — 이 도구는 숫자를 만들지 않습니다.'},
+    {key:'novel', label:'새로운 점·중요성', req:false,
+     ask:'기존 보고와 무엇이 다른지 1~2문장.'},
+    {key:'reviewers', label:'추천·제외 심사위원', req:false, cond:'reviewers',
+     ask:'저널이 요구할 때만 씁니다. 성명·소속·이메일과 추천 이유를 적습니다. 🔴 같은 기관·공동연구자는 보통 제외됩니다.'},
+    {key:'closing', label:'맺음말 · 교신저자 연락처', req:true,
+     ask:'심사 요청 한 문장과, 교신저자 성명·소속·이메일·전화.'}
+  ];
+  var COVER_TPL = {
+    to:      function(S2){ return 'Editor-in-Chief, ' + (S2.journal.name || '〔저널명〕'); },
+    intro:   function(S2){
+      var C = msCounts(S2);
+      return '위 원고 「' + (C.title || '〔제목〕') + '」을 ' +
+             (S2.journal.type || '〔논문 종류〕') + '로 ' +
+             (S2.journal.name || '〔저널명〕') + '에 투고합니다.'; },
+    why:     function(){ return '이 연구는 〔…〕라는 점에서 귀 저널의 범위와 독자층에 맞다고 생각합니다.'; },
+    finding: function(){ return '주요 결과는 다음과 같습니다. 〔…〕'; },
+    novel:   function(){ return '기존 보고와 달리 이 연구는 〔…〕.'; },
+    reviewers: function(){ return '추천: 〔성명 · 소속 · 이메일 · 추천 이유〕\n제외 요청: 〔성명 · 소속 · 이유〕'; },
+    closing: function(S2){
+      var C = msCounts(S2);
+      return '검토를 부탁드립니다.\n교신저자: ' + (C && S2.ms && S2.ms.corresponding ? S2.ms.corresponding : '〔성명〕')
+           + ' · 소속 〔…〕 · 이메일 〔…〕 · 전화 〔…〕'; }
+  };
+  var DECL = [
+    ['orig','이 원고는 다른 학술지에 투고 중이 아니며, 어디에도 출판된 바 없습니다.'],
+    ['allAuth','전 저자가 원고 내용과 이 투고에 동의했습니다.'],
+    ['icmje','전 저자가 ICMJE 저자 기준 4항을 모두 충족합니다.'],
+    ['irb','IRB 승인'],
+    ['exempt','이 연구는 임상연구심의위원회에서 심의면제를 확인받았습니다.'],
+    ['consent','연구대상자에게 서면 동의를 받았습니다.'],
+    ['consentWaive','연구대상자 동의 면제를 승인받았습니다.'],
+    ['coi','이해관계 충돌'],
+    ['fund','연구비'],
+    ['data','데이터는 합당한 요청이 있을 때 제공할 수 있습니다.'],
+    ['checklist','보고지침 체크리스트'],
+    ['trialReg','임상시험 등록번호']
+  ];
+  function declText(S2, key){
+    var st = S2.stmt || {};
+    if (key === 'irb')
+      return '이 연구는 ' + (st.irbName || '〔기관명〕') + ' 임상연구심의위원회의 승인(승인번호 '
+           + (st.irbNo || '〔번호〕') + ')을 받았습니다.';
+    if (key === 'coi') return '이해관계 충돌: ' + (st.coi || '〔3단계에 적으십시오〕');
+    if (key === 'fund') return '연구비: ' + (st.fund || '〔3단계에 적으십시오〕');
+    if (key === 'trialReg') return '임상시험 등록번호: ' + (st.trialReg || '〔번호〕');
+    if (key === 'checklist')
+      return '해당 보고지침(' + (S2.guide ? GUIDE[S2.guide].name : '〔지침 이름〕') + ') 체크리스트를 함께 냅니다.';
+    for (var i=0;i<DECL.length;i++) if (DECL[i][0] === key) return DECL[i][1];
+    return '';
+  }
+  function coverSlots(S2){
+    var G = S2.gd || {docs:[]}, hasRev = false, out = [];
+    for (var i=0;i<(G.docs||[]).length;i++) if (G.docs[i].key === 'reviewers') hasRev = true;
+    for (i=0;i<COVER.length;i++){
+      var c = COVER[i];
+      if (c.cond === 'reviewers' && !hasRev) continue;
+      out.push(c);
+    }
+    return out;
+  }
+  function buildCover(S2){
+    var L = [], slots = coverSlots(S2), i;
+    L.push((S2.cover.to || '〔수신 — 편집장 성명·직함〕'));
+    L.push('');
+    L.push((S2.journal.name || '〔저널명〕') + ' 투고');
+    L.push('');
+    for (i=0;i<slots.length;i++){
+      var c = slots[i];
+      if (c.key === 'to') continue;
+      var v = String(S2.cover[c.key] || '').trim();
+      if (c.key === 'closing') continue;
+      L.push(v || ('〔' + c.label + ' — 비어 있습니다〕'));
+      L.push('');
+    }
+    var picked = [];
+    for (i=0;i<DECL.length;i++) if (S2.decl[DECL[i][0]]) picked.push(declText(S2, DECL[i][0]));
+    if (picked.length){ L.push(picked.join(' ')); L.push(''); }
+    else { L.push('〔확인 문단 — 사실인 문장을 골라 주십시오〕'); L.push(''); }
+    L.push(String(S2.cover.closing || '').trim() || '〔맺음말 · 교신저자 연락처 — 비어 있습니다〕');
+    return L.join('\n');
+  }
+  function coverLeft(S2){
+    var slots = coverSlots(S2), n = 0;
+    for (var i=0;i<slots.length;i++)
+      if (slots[i].req && !String(S2.cover[slots[i].key] || '').trim()) n++;
+    var any = false;
+    for (i=0;i<DECL.length;i++) if (S2.decl[DECL[i][0]]) any = true;
+    if (!any) n++;
+    return n;
+  }
+
+  /* ── 서류 목록 · 빈 자리 ─────────────────────────────────────────────── */
+
+  var COMMON_DOCS = [
+    ['titlePage','표제지 (Title page)','제목·전 저자·소속·교신저자 연락처. 저널이 별도 파일로 요구하는 곳이 많습니다'],
+    ['coverLetter','커버레터','4단계에서 만든 것'],
+    ['manuscript','원고 본문','본문 파일. 블라인드 심사면 저자 정보를 뺀 파일이 따로 필요합니다'],
+    ['tables','표','저널이 요구하는 위치(본문 안 / 별도 파일)를 확인하십시오'],
+    ['figures','그림','해상도·파일 형식은 규정에서 확인하십시오'],
+    ['supp','보충 자료 (Supplementary)','해당될 때'],
+    ['authorForm','저자 동의서·서명 서식','저널 서식을 내려받아 전 저자가 서명'],
+    ['coi','이해관계 충돌 진술','3단계에 적으신 것'],
+    ['checklist','보고지침 체크리스트','해당 지침의 원문 서식을 받아 채웁니다']
+  ];
+  function docRows(S2){
+    var G = S2.gd || {docs:[]}, rows = [], seen = {}, i;
+    for (i=0;i<(G.docs||[]).length;i++){
+      var d = G.docs[i];
+      rows.push({key:'g_'+d.key, label:d.label, src:'규정', ev:d.ev, note:''});
+      seen[d.key] = 1;
+    }
+    for (i=0;i<COMMON_DOCS.length;i++){
+      var c = COMMON_DOCS[i];
+      if (seen[c[0]]) continue;
+      rows.push({key:'c_'+c[0], label:c[1], src:'공통', ev:'', note:c[2]});
+    }
+    return rows;
+  }
+  function gapList(S2){
+    var out = [], C = msCounts(S2), G = S2.gd, i;
+    if (!S2.journal.name) out.push('저널명이 비어 있습니다 (2단계).');
+    if (!S2.journal.type) out.push('논문 종류가 비어 있습니다 (2단계) — 분량 제한이 종류마다 다릅니다.');
+    if (!G || !G.has) out.push('🔴 저널 규정을 붙여넣지 않으셨습니다 — 대조한 것이 없습니다. 이 화면의 「규정」 칸은 전부 빈 칸입니다.');
+    else {
+      if (!S2.journal.source) out.push('규정을 어디서 복사했는지(주소)가 비어 있습니다 — 나중에 판을 대조할 수 없습니다.');
+      if (!S2.journal.checked) out.push('규정 확인일이 비어 있습니다 — 저널 규정은 판마다 바뀝니다.');
+    }
+    var rows = checkRows(C, G || {limits:{}}, S2.gdO), over = [], none = [];
+    for (i=0;i<rows.length;i++){
+      if (rows[i].verdict === 'over' || rows[i].verdict === 'under') over.push(rows[i].label + '(' + rows[i].gap + ')');
+      if (rows[i].verdict === 'none') none.push(rows[i].label);
+    }
+    if (over.length) out.push('규정을 벗어난 것 ' + over.length + '개 — ' + over.join(' · '));
+    if (none.length) out.push('규정을 확인하지 못한 항목 ' + none.length + '개 — ' + none.join(' · ') + '. 🔴 「제한 없음」이 아니라 「확인 안 됨」입니다.');
+    var sr = sectRows(S2), miss = [];
+    for (i=0;i<sr.length;i++) if (sr[i].inGuide && !sr[i].found) miss.push(sr[i].label);
+    if (miss.length) out.push('🔴 규정에는 있는데 원고에서 못 찾은 것 ' + miss.length + '개 — ' + miss.join(' · '));
+    if (!S2.guide) out.push('보고지침을 고르지 않으셨습니다 (3단계).');
+    var un = 0;
+    for (i=0;i<S2.authors.length;i++){
+      var c = S2.authors[i].c || [];
+      if (!(c[0] && c[1] && c[2] && c[3])) un++;
+    }
+    if (!S2.authors.length) out.push('저자가 한 줄도 없습니다 (3단계).');
+    else if (un) out.push('ICMJE 4항을 다 체크하지 않은 저자 ' + un + '명 — 이 도구는 판정하지 않습니다. 연구자가 확인하십시오.');
+    var corr = 0;
+    for (i=0;i<S2.authors.length;i++) if (S2.authors[i].corr) corr++;
+    if (S2.authors.length && !corr) out.push('교신저자를 고르지 않으셨습니다 (3단계).');
+    if (!String(S2.stmt.coi||'').trim()) out.push('이해관계 충돌 진술이 비어 있습니다 (3단계).');
+    if (!String(S2.stmt.fund||'').trim()) out.push('연구비 표기가 비어 있습니다 (3단계).');
+    var cl = coverLeft(S2);
+    if (cl) out.push('커버레터에서 아직 비어 있는 자리 ' + cl + '개 (4단계).');
+    var dr = docRows(S2), un2 = 0;
+    for (i=0;i<dr.length;i++) if (!S2.docChk[dr[i].key]) un2++;
+    if (un2) out.push('체크하지 않은 서류 ' + un2 + '개 (5단계).');
+    if (C.abstractWords === 0) out.push('초록을 못 읽었습니다 — 1단계에서 직접 붙여넣으십시오.');
+    if (S2.ms && S2.ms.pii && S2.ms.pii.length) out.push('🔴 개인정보 형태의 문자열이 원고에 있습니다 (1단계에서 확인).');
+    return out;
+  }
+
+  function fmtLimit(r){
+    if (!r.rule) return '확인 안 됨';
+    return r.rule + (r.src === '직접' ? ' (직접 적음)' : ' (규정에서 찾음)');
+  }
+  function buildText(S2){
+    var L = [], C = msCounts(S2), G = S2.gd || {limits:{}, docs:[], style:{}}, i;
+    L.push('# 투고 준비 정리본');
+    L.push('');
+    L.push('> 🔴 이 정리본의 「저널 규정」은 **사용자가 붙여넣은 글에서만** 뽑은 것이다. 도구가 기억한 숫자는 하나도 없다.');
+    L.push('> 확인 안 됨 = 붙여넣은 글에 없었다는 뜻이며, 「제한이 없다」는 뜻이 아니다. 투고 전 저널 홈페이지에서 확인한다.');
+    L.push('');
+    L.push('## 1. 저널');
+    L.push('- 저널: ' + (S2.journal.name || '(비어 있음)'));
+    L.push('- 논문 종류: ' + (S2.journal.type || '(비어 있음)'));
+    L.push('- 규정 출처: ' + (S2.journal.source || '(비어 있음)') + ' · 확인일 ' + (S2.journal.checked || '(비어 있음)'));
+    L.push('- 규정 붙여넣기: ' + (G.has ? (G.len + '자') : '없음 — 대조하지 못했다'));
+    if (G.fees) L.push('- 게재료(규정에서 찾음): ' + G.fees.currency + ' ' + G.fees.amount + ' — 🔴 금액·통화는 홈페이지에서 다시 확인');
+    else L.push('- 게재료: 확인 안 됨 — 저널 홈페이지에서 확인');
+    var dd = effLimit(G, S2.gdO, 'decisionDays');
+    L.push('- 1차 결정까지: ' + (dd.value ? (dd.value + (dd.unit||'')) : '확인 안 됨 — 저널 홈페이지에서 확인'));
+    L.push('');
+    L.push('## 2. 원고');
+    L.push('- 제목: ' + (C.title || '(비어 있음)'));
+    L.push('- 주제어: ' + (C.keywords.length ? C.keywords.join(', ') : '(비어 있음)'));
+    L.push('- 저자: ' + (S2.authors.length ? S2.authors.map(function(a){ return a.name + (a.corr?'(교신)':''); }).join(', ') : '(비어 있음)'));
+    L.push('- 보고지침: ' + (S2.guide ? (GUIDE[S2.guide].name + ' — ' + GUIDE[S2.guide].scope) : '(고르지 않음)'));
+    L.push('  - 🔴 체크리스트 항목은 이 도구에 없다. 지침 원문 서식을 받아 채운다.');
+    L.push('');
+    L.push('## 3. 셀 수 있는 대조');
+    L.push('');
+    L.push('| 항목 | 내 원고 | 저널 규정 | 판정 |');
+    L.push('|---|---|---|---|');
+    var rows = checkRows(C, G, S2.gdO);
+    for (i=0;i<rows.length;i++){
+      var v = rows[i].verdict;
+      var t = v === 'ok' ? '맞음' : v === 'over' ? '넘음 ' + rows[i].gap
+            : v === 'under' ? '모자람 ' + rows[i].gap : v === 'unknown' ? '원고에서 못 셈' : '규정 확인 안 됨';
+      L.push('| ' + rows[i].label + ' | ' + rows[i].mine + ' | ' + fmtLimit(rows[i]) + ' | ' + t + ' |');
+    }
+    L.push('');
+    for (i=0;i<rows.length;i++) if (rows[i].ev) L.push('- 근거(' + rows[i].label + '): ' + rows[i].ev);
+    L.push('');
+    L.push('## 4. 섹션·진술 유무');
+    var sr = sectRows(S2);
+    for (i=0;i<sr.length;i++)
+      L.push('- [' + (sr[i].found ? 'x' : ' ') + '] ' + sr[i].label
+           + (sr[i].inGuide ? ' — 규정에 언급됨' : '') + (sr[i].found ? '' : ' — 원고에서 못 찾음'));
+    L.push('');
+    L.push('## 5. ICMJE 저자 기준 4항 (연구자 체크 · 도구가 판정하지 않음)');
+    L.push('');
+    L.push('| 저자 | ① 기여 | ② 작성·검토 | ③ 최종 승인 | ④ 책임 | 교신 |');
+    L.push('|---|---|---|---|---|---|');
+    for (i=0;i<S2.authors.length;i++){
+      var a = S2.authors[i], c = a.c || [];
+      L.push('| ' + a.name + ' | ' + (c[0]?'v':' ') + ' | ' + (c[1]?'v':' ') + ' | '
+           + (c[2]?'v':' ') + ' | ' + (c[3]?'v':' ') + ' | ' + (a.corr?'v':' ') + ' |');
+    }
+    L.push('');
+    L.push('- 출처: ICMJE 권고 「저자 기준」 — 🔴 판·개정일은 ICMJE 홈페이지에서 확인.');
+    L.push('');
+    L.push('## 6. 진술');
+    L.push('- 이해관계 충돌: ' + (S2.stmt.coi || '(비어 있음)'));
+    L.push('- 연구비: ' + (S2.stmt.fund || '(비어 있음)'));
+    L.push('- IRB: ' + (S2.stmt.irbName || '(기관명 비어 있음)') + ' · 승인번호 ' + (S2.stmt.irbNo || '(비어 있음)'));
+    L.push('- 임상시험 등록번호: ' + (S2.stmt.trialReg || '(비어 있음)'));
+    L.push('');
+    L.push('## 7. 낼 서류');
+    var dr = docRows(S2);
+    for (i=0;i<dr.length;i++){
+      L.push('- [' + (S2.docChk[dr[i].key] ? 'x' : ' ') + '] ' + dr[i].label
+           + ' — ' + (dr[i].src === '규정' ? '규정에서 찾음' : '공통 · 이 저널이 요구하는지 확인 필요'));
+      if (dr[i].ev) L.push('  - 근거: ' + dr[i].ev);
+    }
+    L.push('');
+    L.push('## 8. 형식에 관한 언급 (붙여넣은 규정에서 오려 온 문장)');
+    var sk = Object.keys(G.style || {});
+    if (!sk.length) L.push('- 없음 — 규정을 붙여넣지 않았거나, 그 글에 해당 언급이 없었다.');
+    for (i=0;i<sk.length;i++) L.push('- ' + G.style[sk[i]].label + ': ' + G.style[sk[i]].ev);
+    L.push('');
+    L.push('## 9. 커버레터');
+    L.push('');
+    L.push('```');
+    L.push(buildCover(S2));
+    L.push('```');
+    L.push('');
+    L.push('## 10. 아직 빈 자리');
+    var gl = gapList(S2);
+    if (!gl.length) L.push('- 없음');
+    for (i=0;i<gl.length;i++) L.push('- ' + gl[i]);
+    return L.join('\n');
+  }
+
+  /* ══════════════════ 여기부터 화면 ══════════════════ */
+
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function msg(id, text, isErr){
+    var box = $(id); box.textContent = '';
+    var s = el('span', 'status' + (isErr ? ' err' : ''), text);
+    box.appendChild(s);
+  }
+  function save(){ try{ localStorage.setItem('paperDraft', JSON.stringify(S)); }catch(e){} }
+
+  /* 필드 한 줄 만들기 */
+  function fld(parent, o){
+    var w = el('div','fld');
+    var lab = el('div','lab');
+    lab.appendChild(el('span','t', o.label));
+    if (o.tag) lab.appendChild(el('span','tag ' + (o.tagCls||''), o.tag));
+    if (o.tag2) lab.appendChild(el('span','tag ' + (o.tag2Cls||''), o.tag2));
+    w.appendChild(lab);
+    if (o.ask) w.appendChild(el('div','ask', o.ask));
+    var inp;
+    if (o.type === 'textarea'){ inp = el('textarea'); if (o.rows) inp.rows = o.rows; }
+    else { inp = el('input'); inp.type = 'text'; }
+    inp.value = o.value == null ? '' : o.value;
+    if (o.placeholder) inp.placeholder = o.placeholder;
+    inp.addEventListener('input', function(){ o.on(inp.value); save(); });
+    w.appendChild(inp);
+    if (o.ev) w.appendChild(el('div','ev', '근거: ' + o.ev));
+    parent.appendChild(w);
+    return inp;
+  }
+
+  function show(n){
+    for (var i=1;i<=5;i++) $('s'+i).hidden = (i !== n);
+    maxStep = Math.max(maxStep, n);
+    var kids = $('rail').children;
+    for (i=0;i<kids.length;i++){
+      var step = i+1;
+      kids[i].disabled = step > maxStep;
+      kids[i].setAttribute('aria-current', step === n ? 'true' : 'false');
+      kids[i].classList.toggle('done', step < n);
+    }
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target.closest ? e.target.closest('[data-go]') : null;
+    if (!t || t.disabled) return;
+    var n = +t.dataset.go;
+    if (n === 2) renderJournal();
+    if (n === 3) renderCheck();
+    if (n === 4) renderCover();
+    if (n === 5) renderPackage();
+    show(n);
+  });
+
+  /* ── 화면: 1단계 ── */
+  var msEl = $('ms'), agEl = $('ag');
+  msEl.addEventListener('input', function(){
+    $('msCnt').textContent = msEl.value.length.toLocaleString() + '자';
+  });
+  agEl.addEventListener('input', function(){
+    $('agCnt').textContent = agEl.value.length.toLocaleString() + '자';
+  });
+
+  var DEMO_MS = [
+    '[예시 원고 — 둘러보기용입니다]',
+    '',
+    'Title: Initial Hypothermia and 30-Day Mortality in Older Adults Presenting to the Emergency Department: A Retrospective Cohort Study',
+    '',
+    'Authors: Gildong Hong, Chunhyang Seong, Kkeokjeong Im',
+    'Affiliations: Department of Imaginary Emergency Medicine, Placeholder University Hospital',
+    'Corresponding author: Gildong Hong',
+    '',
+    'Abstract',
+    'Background: Older adults arriving with a low body temperature may do worse, but the size of the',
+    'difference is not well described in a general emergency population. Methods: This imaginary',
+    'retrospective cohort study screened consecutive visits by patients aged sixty-five or older at a single',
+    'placeholder hospital. The exposure was the first triage temperature and the outcome was death within',
+    'thirty days. Multivariable logistic regression adjusted for age, sex, triage acuity and comorbidity.',
+    'Results: A fabricated number of visits entered the final cohort. Thirty-day death was more common in',
+    'the low-temperature group, and the association persisted after adjustment. Conclusions: In this',
+    'invented cohort an initial low temperature was associated with higher thirty-day mortality. All values',
+    'in this demonstration text are fabricated and must not be cited.',
+    '',
+    'Keywords: hypothermia, emergency department, older adults, mortality, retrospective cohort',
+    '',
+    '1. Introduction',
+    'Body temperature is measured at triage for nearly every visit. This paragraph exists so that the body',
+    'word count is not zero in the demonstration. Nothing here is real.',
+    '',
+    '2. Methods',
+    'Retrospective cohort study at a single placeholder hospital. Exclusions are shown in Figure 1.',
+    '',
+    '3. Results',
+    'Baseline characteristics are in Table 1 and adjusted associations in Table 2. Figure 2 shows the',
+    'distribution and Figure 3 the sensitivity analysis. Supplementary Figure S1 uses another cut point.',
+    '',
+    '4. Discussion',
+    'A fabricated file cannot support a clinical claim.',
+    '',
+    'Funding',
+    'This imaginary study received no external funding.',
+    '',
+    'Conflict of interest',
+    'The authors declare no competing interests.',
+    '',
+    'References',
+    '1. Placeholder A. Imaginary reference one. Journal of Imaginary Medicine. 2019;1:1-9.',
+    '2. Placeholder B. Imaginary reference two. Fictional Geriatrics. 2020;2:10-19.',
+    '3. Placeholder C. Imaginary reference three. Imaginary Emergency Reports. 2021;3:20-29.',
+    '4. Placeholder D. Imaginary reference four. Journal of Imaginary Medicine. 2022;4:30-39.',
+    '5. Placeholder E. Imaginary reference five. Fictional Geriatrics. 2023;5:40-49.',
+    '6. Placeholder F. Imaginary reference six. Imaginary Emergency Reports. 2024;6:50-59.'
+  ].join('\n');
+
+  $('demo1').addEventListener('click', function(){
+    msEl.value = DEMO_MS;
+    msEl.dispatchEvent(new Event('input'));
+    msg('s1msg','둘러보기용 예시 원고를 넣었습니다. 「읽어서 세기」를 눌러 보세요.');
+  });
+  $('msFile').addEventListener('change', function(e){
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    f.text().then(function(t){
+      msEl.value = t; msEl.dispatchEvent(new Event('input'));
+      msg('s1msg', f.name + ' 을 읽었습니다. 이 파일은 브라우저 안에서만 열렸습니다.');
+    }, function(){ msg('s1msg','파일을 읽지 못했습니다. 내용을 복사해 붙여넣어 주세요.', true); });
+  });
+
+  $('read1').addEventListener('click', function(){
+    var raw = msEl.value.trim();
+    if (raw.length < 40){ msg('s1msg','원고 내용을 조금 더 넣어 주세요. 제목과 초록만이라도 됩니다.', true); return; }
+    S.raw = raw;
+    S.ms = parseManuscript(raw);
+    S.msO = {};
+    if (!S.authors.length){        /* 이미 적어 둔 저자가 있으면 덮지 않는다 */
+      S.authors = [];
+      for (var i=0;i<S.ms.authors.length;i++)
+        S.authors.push({name:S.ms.authors[i], c:[false,false,false,false],
+                        corr:(S.ms.corresponding && S.ms.authors[i] === S.ms.corresponding)});
+    }
+    if (!S.guide && S.ms.design.pick) S.guide = S.ms.design.pick;
+    renderMs();
+    var got = [];
+    if (S.ms.title) got.push('제목');
+    if (S.ms.abstract) got.push('초록');
+    if (S.ms.keywords.length) got.push('주제어');
+    if (S.ms.authors.length) got.push('저자');
+    msg('s1msg','읽었습니다' + (got.length ? ' — ' + got.join('·') : '') +
+        '. 못 찾은 칸은 비워 두었습니다. 원고는 이 브라우저 밖으로 나가지 않았습니다.');
+    save();
+  });
+
+  function renderMs(){
+    var m = S.ms;
+    if (!m) return;
+    $('msCard').hidden = false; $('countCard').hidden = false; $('s1next').hidden = false;
+    maxStep = Math.max(maxStep, 2);
+    show(1);
+
+    /* 개인정보 형태 */
+    var pc = $('piiCard'), pl = $('piiList');
+    pl.textContent = '';
+    if (m.pii.length){
+      pc.hidden = false;
+      var ul = el('ul','pre');
+      for (var i=0;i<m.pii.length;i++){
+        var li = el('li');
+        li.appendChild(el('span','', '🔴'));
+        var d = el('div');
+        d.appendChild(el('div','t', m.pii[i].label));
+        d.appendChild(el('div','d', m.pii[i].n + '곳에서 형태가 걸렸습니다. 값은 띄우지 않습니다.'));
+        li.appendChild(d);
+        ul.appendChild(li);
+      }
+      pl.appendChild(ul);
+    } else pc.hidden = true;
+
+    /* 읽은 것 */
+    var box = $('msFields'); box.textContent = '';
+    var C = msCounts(S);
+    fld(box, {label:'제목', tag:(m.title?'자동':'직접'), tagCls:(m.title?'auto':'own'),
+      value:C.title, ev:m.evidence.title,
+      ask:'저널이 국문·영문 제목을 따로 요구하면 둘 다 준비하십시오.',
+      on:function(v){ S.msO.title = v; renderCounts(); }});
+    fld(box, {label:'초록', type:'textarea', rows:6, tag:(m.abstract?'자동':'직접'),
+      tagCls:(m.abstract?'auto':'own'), value:C.abstract, ev:m.evidence.abstract,
+      ask:'초록만 따로 세야 해서 받습니다. 못 읽었으면 직접 붙여넣으십시오.',
+      on:function(v){ S.msO.abstract = v; renderCounts(); }});
+    fld(box, {label:'주제어', tag:(m.keywords.length?'자동':'직접'), tagCls:(m.keywords.length?'auto':'own'),
+      value:C.keywords.join(', '), ev:m.evidence.keywords, placeholder:'쉼표로 구분',
+      ask:'저널이 MeSH 용어를 요구하는 곳도 있습니다 — 규정에서 확인하십시오.',
+      on:function(v){ S.msO.keywords = v; renderCounts(); }});
+    fld(box, {label:'소속', tag:(m.affiliation?'자동':'직접'), tagCls:(m.affiliation?'auto':'own'),
+      type:'textarea', rows:2, value:(S.msO.affiliation!==undefined?S.msO.affiliation:m.affiliation),
+      ask:'표제지에 그대로 들어갑니다.',
+      on:function(v){ S.msO.affiliation = v; }});
+    renderCounts();
+  }
+  function renderCounts(){
+    var m = S.ms, C = msCounts(S), t = $('countTable');
+    t.textContent = '';
+    var thead = el('thead'), tr = el('tr');
+    ['','항목','세어 본 값','직접 고치기'].forEach(function(h){ tr.appendChild(el('th','',h)); });
+    thead.appendChild(tr); t.appendChild(thead);
+    var tb = el('tbody');
+    var ROWS = [
+      ['제목', C.titleChars + '자(공백 포함) · ' + C.titleWords + '단어', null],
+      ['초록', C.abstractWords + '단어 · ' + C.abstractChars + '자(공백 제외)', null],
+      ['주제어', C.keywordCount + '개', null],
+      ['본문 단어수 (서론~참고문헌 앞)', (C.bodyWords || '못 셌습니다'), 'bodyWords'],
+      ['참고문헌', C.refCount + '개' + (m.refLast && m.refLast !== m.refCount ? ' (마지막 번호 ' + m.refLast + ')' : ''), 'refCount'],
+      ['그림', C.figures + '개' + (m.suppFigures ? ' (보충 ' + m.suppFigures + ')' : ''), 'figures'],
+      ['표', C.tables + '개' + (m.suppTables ? ' (보충 ' + m.suppTables + ')' : ''), 'tables'],
+      ['원고 전체', m.totalWords + '단어', null]
+    ];
+    for (var i=0;i<ROWS.length;i++){
+      var r = el('tr');
+      r.appendChild(el('td','no', String(i+1)));
+      r.appendChild(el('td','', ROWS[i][0]));
+      r.appendChild(el('td','num', String(ROWS[i][1])));
+      var cell = el('td');
+      if (ROWS[i][2]){
+        var inp = el('input'); inp.type = 'text'; inp.value = S.msO[ROWS[i][2]] || '';
+        inp.placeholder = '숫자';
+        inp.style.width = '5.5em'; inp.style.font = 'inherit';
+        inp.style.background = 'var(--paper)'; inp.style.color = 'var(--ink)';
+        inp.style.border = '1px solid var(--rule)'; inp.style.borderRadius = '2px'; inp.style.padding = '4px 6px';
+        (function(key, inp2){
+          inp2.addEventListener('input', function(){ S.msO[key] = inp2.value; save(); renderCounts(); });
+        })(ROWS[i][2], inp);
+        cell.appendChild(inp);
+      } else cell.appendChild(el('span','hint','제목·초록 칸을 고치면 다시 셉니다'));
+      r.appendChild(cell);
+      tb.appendChild(r);
+    }
+    t.appendChild(tb);
+    $('countNote').textContent =
+      '그림·표는 「Figure 1」·「표 1」 같은 표현을 세어 서로 다른 번호만 셌습니다. ' +
+      '「Supplementary Figure S1」은 보충으로 따로 셌습니다. 원고에서 번호를 쓰지 않으셨으면 0으로 나옵니다 — 직접 고치십시오.';
+  }
+
+  /* ── 화면: 2단계 ── */
+  var ART_TYPES = ['원저 (Original Article)','단보 (Brief Report)','종설 (Review)',
+                   '증례보고 (Case Report)','편집인에게 보내는 글 (Letter)','기타'];
+  function renderJournal(){
+    var box = $('jFields'); box.textContent = '';
+    fld(box, {label:'저널명', tag:'필수', tagCls:'req', value:S.journal.name,
+      ask:'투고할 저널 이름을 그대로 적으십시오. 이 도구에는 저널 목록이 없습니다.',
+      on:function(v){ S.journal.name = v; }});
+    var w = el('div','fld');
+    var lab = el('div','lab');
+    lab.appendChild(el('span','t','논문 종류'));
+    lab.appendChild(el('span','tag req','필수'));
+    w.appendChild(lab);
+    w.appendChild(el('div','ask','분량 제한이 종류마다 다릅니다. 저널이 쓰는 이름은 규정에서 확인하십시오 — 아래는 흔한 이름입니다.'));
+    var chips = el('div','chips');
+    for (var i=0;i<ART_TYPES.length;i++){
+      (function(name){
+        var b = el('button','chip sm', name);
+        b.type = 'button';
+        b.setAttribute('aria-pressed', S.journal.type === name ? 'true' : 'false');
+        b.addEventListener('click', function(){ S.journal.type = name; save(); renderJournal(); });
+        chips.appendChild(b);
+      })(ART_TYPES[i]);
+    }
+    w.appendChild(chips);
+    box.appendChild(w);
+    fld(box, {label:'규정을 어디서 복사했는지', tag:'권장', value:S.journal.source,
+      ask:'저널 홈페이지 주소를 적어 두십시오. 나중에 판이 바뀌었는지 대조할 수 있습니다.',
+      on:function(v){ S.journal.source = v; }});
+    fld(box, {label:'규정 확인일', tag:'권장', value:S.journal.checked, placeholder:'2026-09-24',
+      ask:'🔴 저널 규정은 판마다 바뀝니다. 언제 본 것인지가 남아야 합니다.',
+      on:function(v){ S.journal.checked = v; }});
+  }
+  $('read2').addEventListener('click', function(){
+    var raw = agEl.value.trim();
+    S.ag = raw;
+    S.gd = parseGuidelines(raw);
+    if (!raw){ msg('s2msg','규정이 비어 있습니다. 붙여넣지 않으면 대조 칸이 전부 비어 있게 됩니다.', true); }
+    else {
+      var n = Object.keys(S.gd.limits).length;
+      msg('s2msg','붙여넣은 글에서 숫자 ' + n + '개와 서류 ' + S.gd.docs.length + '건을 찾았습니다. ' +
+          '못 찾은 것은 「확인 안 됨」으로 두었습니다 — 제가 채우지 않습니다.');
+    }
+    renderLimits();
+    maxStep = Math.max(maxStep, 3);
+    show(2);
+    save();
+  });
+  var LIM_FIELDS = [
+    ['bodyWords','본문 분량','단어'], ['abstractWords','초록 분량','단어'],
+    ['titleChars','제목 길이','자'], ['titleWords','제목 단어수','단어'],
+    ['keywords','주제어 개수','개'], ['refs','참고문헌 수','개'],
+    ['figures','그림 수','개'], ['tables','표 수','개'],
+    ['figTabTotal','그림+표 합계','개'], ['decisionDays','1차 결정까지','']
+  ];
+  function renderLimits(){
+    var G = S.gd;
+    if (!G){ $('limCard').hidden = true; $('styleCard').hidden = true; return; }
+    $('limCard').hidden = false;
+    var box = $('limFields'); box.textContent = '';
+    for (var i=0;i<LIM_FIELDS.length;i++){
+      (function(key, label, unit){
+        var found = G.limits[key];
+        var alt = (G.alts && G.alts[key]) || [];
+        var ask = found
+          ? ('규정에서 찾은 값: ' + found.value + (found.unit || unit) +
+             (found.range && found.min ? (' (최소 ' + found.min + ')') : '') +
+             (alt.length ? (' · 🔴 그 글에 다른 숫자도 있습니다: ' + alt.map(function(a){ return a.value; }).join(', ') +
+                            ' — 논문 종류에 맞는 것을 직접 적으십시오') : ''))
+          : '🔴 붙여넣은 글에 없었습니다. 「제한 없음」이 아닙니다 — 저널 홈페이지에서 확인해 직접 적으십시오.';
+        if (key === 'abstractWords' || key === 'titleChars' || key === 'titleWords')
+          ask += ' · 단위를 보십시오 — 저널이 「단어」로 재는지 「자」로 재는지에 따라 값이 다릅니다. ' +
+                 '규정에서 읽은 단위를 그대로 씁니다(규정이 없으면 ' + unit + '로 셉니다).';
+        fld(box, {label:label, tag:(found ? '규정에서 찾음' : '확인 안 됨'), tagCls:(found ? 'auto' : 'req'),
+          value:(S.gdO[key] || ''), placeholder:(found ? ('비워 두면 ' + found.value + ' 을 씁니다') : '숫자'),
+          ask:ask, ev:(found ? found.ev : ''),
+          on:function(v){ S.gdO[key] = v; }});
+      })(LIM_FIELDS[i][0], LIM_FIELDS[i][1], LIM_FIELDS[i][2]);
+    }
+    var fee = el('div','fld');
+    var flab = el('div','lab');
+    flab.appendChild(el('span','t','게재료 (APC)'));
+    flab.appendChild(el('span','tag ' + (G.fees ? 'auto' : 'req'), G.fees ? '규정에서 찾음' : '확인 안 됨'));
+    fee.appendChild(flab);
+    fee.appendChild(el('div','ask', G.fees
+      ? ('붙여넣은 글에 있던 금액: ' + G.fees.currency + ' ' + G.fees.amount +
+         ' — 🔴 금액·통화·면제 조건은 저널 홈페이지에서 다시 확인하십시오.')
+      : '🔴 붙여넣은 글에 금액이 없었습니다. 저널 홈페이지에서 확인하십시오 — 제가 기억하는 금액을 적지 않습니다.'));
+    if (G.fees) fee.appendChild(el('div','ev','근거: ' + G.fees.ev));
+    box.appendChild(fee);
+
+    var sk = Object.keys(G.style || {});
+    var sc = $('styleCard'), sl = $('styleList');
+    sl.textContent = '';
+    if (!sk.length){ sc.hidden = true; }
+    else {
+      sc.hidden = false;
+      var ul = el('ul','pre');
+      for (var j=0;j<sk.length;j++){
+        var st = G.style[sk[j]], li = el('li');
+        li.appendChild(el('span','', '·'));
+        var d = el('div');
+        d.appendChild(el('div','t', st.label));
+        d.appendChild(el('div','d', '걸린 말: ' + st.words.join(', ')));
+        d.appendChild(el('div','ev', st.ev));
+        li.appendChild(d);
+        ul.appendChild(li);
+      }
+      sl.appendChild(ul);
+    }
+  }
+
+  /* ── 화면: 3단계 ── */
+  function renderCheck(){
+    if (!S.ms){ msg('s1msg','먼저 1단계에서 원고를 읽어 주세요.', true); show(1); return; }
+    var C = msCounts(S), G = S.gd || {limits:{}, docs:[], style:{}, has:false};
+    $('checkLead').textContent = G.has
+      ? '「저널 규정」 칸은 2단계에서 붙여넣으신 글에서만 나온 값입니다.'
+      : '🔴 2단계에서 규정을 붙여넣지 않으셨습니다 — 규정 칸이 전부 「확인 안 됨」입니다. 대조한 것이 없습니다.';
+    var rows = checkRows(C, G, S.gdO), t = $('checkTable');
+    t.textContent = '';
+    var thead = el('thead'), tr = el('tr');
+    ['','항목','내 원고','저널 규정','판정'].forEach(function(h){ tr.appendChild(el('th','',h)); });
+    thead.appendChild(tr); t.appendChild(thead);
+    var tb = el('tbody');
+    for (var i=0;i<rows.length;i++){
+      var r = rows[i], row = el('tr');
+      row.appendChild(el('td','no', String(i+1)));
+      var c2 = el('td');
+      c2.appendChild(el('div','', r.label));
+      if (r.note) c2.appendChild(el('div','hint', r.note));
+      if (r.ev) c2.appendChild(el('div','ev', '규정 근거: ' + r.ev));
+      row.appendChild(c2);
+      row.appendChild(el('td','num', r.mine));
+      var c4 = el('td','num');
+      c4.appendChild(el('span','', r.rule || '확인 안 됨'));
+      if (r.src) c4.appendChild(el('div','hint', r.src === '직접' ? '직접 적으심' : '규정에서 찾음'));
+      row.appendChild(c4);
+      var c5 = el('td');
+      var p = el('span','pill ' + (r.verdict === 'ok' ? 'ok' : (r.verdict === 'over' || r.verdict === 'under') ? 'over' : 'cond'),
+        r.verdict === 'ok' ? '맞음' : r.verdict === 'over' ? '넘음 ' + r.gap
+        : r.verdict === 'under' ? '모자람 ' + r.gap : r.verdict === 'unknown' ? '원고에서 못 셈' : '규정 확인 안 됨');
+      c5.appendChild(p);
+      row.appendChild(c5);
+      tb.appendChild(row);
+    }
+    t.appendChild(tb);
+
+    /* 섹션 */
+    var sr = sectRows(S), st = $('sectTable');
+    st.textContent = '';
+    var th2 = el('thead'), tr2 = el('tr');
+    ['','섹션·진술','원고','저널 규정에 언급'].forEach(function(h){ tr2.appendChild(el('th','',h)); });
+    th2.appendChild(tr2); st.appendChild(th2);
+    var tb2 = el('tbody');
+    for (i=0;i<sr.length;i++){
+      var s = sr[i], r2 = el('tr');
+      r2.appendChild(el('td','no', String(i+1)));
+      var cc = el('td');
+      cc.appendChild(el('div','', s.label));
+      if (s.line) cc.appendChild(el('div','ev', s.line));
+      r2.appendChild(cc);
+      var c3 = el('td');
+      c3.appendChild(el('span','pill ' + (s.found ? 'ok' : 'cond'), s.found ? '있음' : '못 찾음'));
+      r2.appendChild(c3);
+      var c4b = el('td');
+      if (s.inGuide){
+        c4b.appendChild(el('span','pill ' + (s.found ? 'gen' : 'over'), s.found ? '규정에 있음' : '규정에 있는데 원고에 없음'));
+        if (s.guideEv) c4b.appendChild(el('div','ev', s.guideEv));
+      } else c4b.appendChild(el('span','hint','—'));
+      r2.appendChild(c4b);
+      tb2.appendChild(r2);
+    }
+    st.appendChild(tb2);
+
+    renderGuide();
+    renderIcmje();
+    renderStmt();
+  }
+  function renderGuide(){
+    var box = $('guideChips'); box.textContent = '';
+    var d = (S.ms && S.ms.design) || {pick:'', hits:{}};
+    for (var i=0;i<GUIDE_ORDER.length;i++){
+      (function(g){
+        var b = el('button','chip', GUIDE[g].name + ' — ' + GUIDE[g].scope);
+        b.type = 'button';
+        b.setAttribute('aria-pressed', S.guide === g ? 'true' : 'false');
+        b.addEventListener('click', function(){ S.guide = (S.guide === g ? '' : g); save(); renderGuide(); });
+        box.appendChild(b);
+      })(GUIDE_ORDER[i]);
+    }
+    var w = $('guideWhy'); w.textContent = '';
+    var keys = Object.keys(d.hits || {});
+    if (keys.length){
+      w.appendChild(el('div','', '원고에서 이런 말이 보여서 골라 두었습니다 — ' +
+        (d.pick ? GUIDE[d.pick].name + '을 먼저 제안합니다.' : '')));
+      for (i=0;i<keys.length;i++){
+        var h = d.hits[keys[i]];
+        var line = el('div','ev', GUIDE[keys[i]].name + ' ← 「' + h.word + '」 · ' + h.line);
+        w.appendChild(line);
+      }
+    } else {
+      w.appendChild(el('div','', '원고에서 설계를 가리키는 말을 찾지 못했습니다. 🔴 직접 고르십시오 — 제가 추측해 정하지 않습니다.'));
+    }
+    w.appendChild(el('div','warn','🔴 위 다섯 가지 밖의 설계도 많습니다(예측모형·동물실험·질적연구 등). ' +
+      '해당 지침이 무엇인지는 저널 규정과 보고지침 등록처(EQUATOR Network)에서 확인하십시오 — 이 도구는 다섯 가지만 짚습니다.'));
+  }
+  var ICMJE_H = ['① 기여','② 작성·검토','③ 최종 승인','④ 책임','교신','지움'];
+  function renderIcmje(){
+    var t = $('icmjeTable'); t.textContent = '';
+    var thead = el('thead'), tr = el('tr');
+    tr.appendChild(el('th','','저자'));
+    for (var i=0;i<ICMJE_H.length;i++) tr.appendChild(el('th','',ICMJE_H[i]));
+    thead.appendChild(tr); t.appendChild(thead);
+    var tb = el('tbody');
+    for (i=0;i<S.authors.length;i++){
+      (function(idx){
+        var a = S.authors[idx], row = el('tr');
+        var c0 = el('td');
+        var nm = el('input'); nm.type = 'text'; nm.value = a.name || '';
+        nm.placeholder = '성명';
+        nm.addEventListener('input', function(){ a.name = nm.value; save(); });
+        c0.appendChild(nm); row.appendChild(c0);
+        for (var k=0;k<4;k++){
+          (function(kk){
+            var td = el('td'), cb = el('input');
+            cb.type = 'checkbox'; cb.checked = !!(a.c && a.c[kk]);
+            cb.addEventListener('change', function(){
+              if (!a.c) a.c = [false,false,false,false];
+              a.c[kk] = cb.checked; save(); updateIcmjeCount();
+            });
+            td.appendChild(cb); row.appendChild(td);
+          })(k);
+        }
+        var tdc = el('td'), rb = el('input');
+        rb.type = 'checkbox'; rb.checked = !!a.corr;
+        rb.addEventListener('change', function(){
+          for (var j=0;j<S.authors.length;j++) S.authors[j].corr = false;
+          a.corr = rb.checked; save(); renderIcmje();
+        });
+        tdc.appendChild(rb); row.appendChild(tdc);
+        var tdd = el('td'), del = el('button','btn ghost sm','×');
+        del.type = 'button';
+        del.addEventListener('click', function(){ S.authors.splice(idx,1); save(); renderIcmje(); });
+        tdd.appendChild(del); row.appendChild(tdd);
+        tb.appendChild(row);
+      })(i);
+    }
+    t.appendChild(tb);
+    updateIcmjeCount();
+  }
+  function updateIcmjeCount(){
+    var un = 0;
+    for (var i=0;i<S.authors.length;i++){
+      var c = S.authors[i].c || [];
+      if (!(c[0] && c[1] && c[2] && c[3])) un++;
+    }
+    $('icmjeCount').textContent = S.authors.length
+      ? ('저자 ' + S.authors.length + '명 · 4항을 다 체크하지 않은 사람 ' + un + '명')
+      : '저자가 없습니다. 「저자 한 줄 넣기」를 누르십시오.';
+  }
+  $('addAuthor').addEventListener('click', function(){
+    S.authors.push({name:'', c:[false,false,false,false], corr:false});
+    save(); renderIcmje();
+  });
+  function renderStmt(){
+    var box = $('stmtFields'); box.textContent = '';
+    fld(box, {label:'이해관계 충돌 (COI)', type:'textarea', rows:2, tag:'직접', tagCls:'own',
+      value:S.stmt.coi, placeholder:'예: 저자들은 이해관계 충돌이 없다고 진술한다',
+      ask:'없으면 「없음」이라고 적는 것도 진술입니다. 저널 서식(ICMJE 공개 서식 등)을 따로 요구하는 곳도 있습니다.',
+      on:function(v){ S.stmt.coi = v; }});
+    fld(box, {label:'연구비 (Funding)', type:'textarea', rows:2, tag:'직접', tagCls:'own',
+      value:S.stmt.fund, placeholder:'예: 이 연구는 ○○의 지원(과제번호 ○○)을 받았다',
+      ask:'과제번호를 정확히 적으십시오. 🔴 과제번호를 제가 채우지 않습니다.',
+      on:function(v){ S.stmt.fund = v; }});
+    fld(box, {label:'IRB 기관명', tag:'직접', tagCls:'own', value:S.stmt.irbName,
+      ask:'승인을 받은 기관의 이름.',
+      on:function(v){ S.stmt.irbName = v; }});
+    fld(box, {label:'IRB 승인번호', tag:'직접', tagCls:'own', value:S.stmt.irbNo,
+      ask:'🔴 번호는 승인서에서 그대로 옮기십시오.',
+      on:function(v){ S.stmt.irbNo = v; }});
+    fld(box, {label:'임상시험 등록번호', tag:'해당 시', tagCls:'own', value:S.stmt.trialReg,
+      ask:'중재연구면 저널이 거의 항상 요구합니다. 해당 없으면 비워 두십시오.',
+      on:function(v){ S.stmt.trialReg = v; }});
+  }
+
+  /* ── 화면: 4단계 ── */
+  function renderCover(){
+    var box = $('coverFields'); box.textContent = '';
+    var slots = coverSlots(S);
+    for (var i=0;i<slots.length;i++){
+      (function(c){
+        var w = el('div','fld');
+        var lab = el('div','lab');
+        lab.appendChild(el('span','t', c.label));
+        lab.appendChild(el('span','tag ' + (c.req ? 'req' : ''), c.req ? '필수' : '권장'));
+        if (c.cond === 'reviewers') lab.appendChild(el('span','tag auto','규정에 있어서 띄웠습니다'));
+        w.appendChild(lab);
+        w.appendChild(el('div','ask', c.ask));
+        var ta = el('textarea');
+        ta.rows = (c.key === 'to' ? 1 : 3);
+        ta.value = S.cover[c.key] || '';
+        ta.addEventListener('input', function(){ S.cover[c.key] = ta.value; save(); paintCover(); });
+        w.appendChild(ta);
+        if (COVER_TPL[c.key]){
+          var row = el('div','btnrow');
+          var b = el('button','btn ghost sm','문장 틀 넣기');
+          b.type = 'button';
+          b.addEventListener('click', function(){
+            ta.value = COVER_TPL[c.key](S);
+            S.cover[c.key] = ta.value; save(); paintCover();
+          });
+          row.appendChild(b);
+          row.appendChild(el('span','hint','틀에는 1~3단계에 적으신 값만 들어갑니다. 〔 〕는 직접 채우십시오.'));
+          w.appendChild(row);
+        }
+        box.appendChild(w);
+      })(slots[i]);
+    }
+    /* 확인 문단 */
+    var w2 = el('div','fld');
+    var lab2 = el('div','lab');
+    lab2.appendChild(el('span','t','확인 문단'));
+    lab2.appendChild(el('span','tag req','필수'));
+    w2.appendChild(lab2);
+    w2.appendChild(el('div','ask','🔴 아래는 「후보 문장」입니다. 사실인 것만 체크하십시오 — 체크한 것만 커버레터에 들어갑니다. 제가 대신 체크하지 않습니다.'));
+    var ul = el('ul','pre');
+    for (i=0;i<DECL.length;i++){
+      (function(key){
+        var li = el('li');
+        var cb = el('input'); cb.type = 'checkbox'; cb.checked = !!S.decl[key];
+        cb.addEventListener('change', function(){ S.decl[key] = cb.checked; save(); renderCover(); });
+        li.appendChild(cb);
+        var d = el('div');
+        d.appendChild(el('div','t', declText(S, key)));
+        li.appendChild(d);
+        ul.appendChild(li);
+      })(DECL[i][0]);
+    }
+    w2.appendChild(ul);
+    box.appendChild(w2);
+    paintCover();
+  }
+  function paintCover(){
+    $('coverOut').textContent = buildCover(S);
+    var n = coverLeft(S);
+    $('coverLeft').textContent = n ? ('아직 비어 있는 자리 ' + n + '개') : '필수 자리는 다 채우셨습니다.';
+  }
+  /* 게시된 화면에서는 브라우저 기본 내려받기가 막혀 있다.
+     파일을 건네는 일은 claude.use('downloads')가 맡는다. 없으면 「복사하기」로 안내한다. */
+  var dlFn = null;
+  if (window.claude && window.claude.use){
+    window.claude.use('downloads').then(function(d){ dlFn = d; }, function(){ dlFn = null; });
+  }
+  function dl(name, text, msgId){
+    if (dlFn && dlFn.save){
+      dlFn.save({filename:name, data:text})
+        .then(function(){ msg(msgId, name + ' 으로 내려받았습니다.'); })
+        .catch(function(){ msg(msgId,'내려받기가 취소되었거나 실패했습니다. 「복사하기」를 쓰십시오.', true); });
+      return;
+    }
+    try{                                        // 파일로 직접 열었을 때는 이 길이 동작한다
+      var b = new Blob([text], {type:'text/markdown;charset=utf-8'});
+      var u = URL.createObjectURL(b), a = document.createElement('a');
+      a.href = u; a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(u); }, 2000);
+      msg(msgId, name + ' 으로 내려받았습니다.');
+    }catch(e){ msg(msgId,'이 화면에서는 내려받기가 안 됩니다. 「복사하기」를 쓰십시오.', true); }
+  }
+  function cp(text, msgId){
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(
+        function(){ msg(msgId,'클립보드에 복사했습니다.'); },
+        function(){ msg(msgId,'복사하지 못했습니다. 미리보기에서 직접 선택해 복사하십시오.', true); });
+    } else msg(msgId,'이 브라우저에서는 복사 버튼을 쓸 수 없습니다. 미리보기에서 직접 선택해 복사하십시오.', true);
+  }
+  $('coverCopy').addEventListener('click', function(){ cp(buildCover(S), 's4msg'); });
+  $('coverDl').addEventListener('click', function(){ dl('커버레터.md', buildCover(S), 's4msg'); });
+
+  /* ── 화면: 5단계 ── */
+  function renderPackage(){
+    var G = S.gd || {has:false, docs:[], limits:{}};
+    var sc = $('srcCard'); sc.textContent = '';
+    sc.appendChild(el('h3','','이 화면의 규정은 어디서 왔나'));
+    if (G.has){
+      sc.appendChild(el('p','hint',
+        '붙여넣은 규정 ' + G.len.toLocaleString() + '자에서 뽑았습니다. 출처: ' +
+        (S.journal.source || '(주소 안 적으심)') + ' · 확인일 ' + (S.journal.checked || '(안 적으심)') + '.'));
+      sc.appendChild(el('div','warn',
+        '🔴 저널 규정은 판마다 바뀝니다. 위 확인일 이후에 바뀌었을 수 있습니다 — 투고 직전에 저널 홈페이지에서 다시 보십시오. ' +
+        '이 도구 안에는 어떤 저널의 규정도 저장돼 있지 않습니다.'));
+    } else {
+      sc.appendChild(el('div','warn',
+        '🔴 규정을 붙여넣지 않으셨습니다. 그래서 이 화면의 서류 목록은 「흔히 요구되는 공통 서류」뿐이고, ' +
+        '숫자 대조는 하나도 하지 못했습니다. 저널 홈페이지의 규정을 2단계에 붙여넣어 주십시오.'));
+    }
+
+    var rows = docRows(S), ul = $('docList');
+    ul.textContent = '';
+    for (var i=0;i<rows.length;i++){
+      (function(r){
+        var li = el('li');
+        var cb = el('input'); cb.type = 'checkbox'; cb.checked = !!S.docChk[r.key];
+        cb.addEventListener('change', function(){
+          S.docChk[r.key] = cb.checked;
+          li.classList.toggle('done', cb.checked);
+          save(); paintAll();
+        });
+        li.appendChild(cb);
+        if (cb.checked) li.classList.add('done');
+        var d = el('div');
+        var top = el('div','t');
+        top.appendChild(document.createTextNode(r.label + ' '));
+        top.appendChild(el('span','pill ' + (r.src === '규정' ? 'gen' : 'cond'),
+          r.src === '규정' ? '규정에서 찾음' : '공통 · 확인 필요'));
+        d.appendChild(top);
+        if (r.note) d.appendChild(el('div','d', r.note));
+        if (r.ev) d.appendChild(el('div','ev', r.ev));
+        li.appendChild(d);
+        ul.appendChild(li);
+      })(rows[i]);
+    }
+    paintAll();
+  }
+  function paintAll(){
+    var gl = gapList(S), ol = $('gapList');
+    ol.textContent = '';
+    if (!gl.length) ol.appendChild(el('li','','빈 자리가 없습니다. 그래도 저널 홈페이지에서 마지막 확인을 하십시오.'));
+    for (var i=0;i<gl.length;i++) ol.appendChild(el('li','', gl[i]));
+    $('allOut').textContent = buildText(S);
+  }
+  $('allDl').addEventListener('click', function(){ dl('투고준비_정리본.md', buildText(S), 's5msg'); });
+  $('allCopy').addEventListener('click', function(){ cp(buildText(S), 's5msg'); });
+  $('wipe').addEventListener('click', function(){
+    try{ localStorage.removeItem('paperDraft'); msg('s5msg','임시 저장을 지웠습니다. 화면에 있는 내용은 그대로입니다 — 새로 열면 빈 화면이 됩니다.'); }
+    catch(e){ msg('s5msg','지우지 못했습니다.', true); }
+  });
+
+  /* ── 화면 밝기 ── */
+  var themeOrder = ['auto','light','dark'], themeName = {auto:'자동', light:'밝게', dark:'어둡게'};
+  function applyTheme(t){
+    if (t === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', t);
+    $('themeBtn').textContent = '화면: ' + themeName[t];
+    try{ localStorage.setItem('paperTheme', t); }catch(e){}
+  }
+  $('themeBtn').addEventListener('click', function(){
+    var cur = 'auto';
+    try{ cur = localStorage.getItem('paperTheme') || 'auto'; }catch(e){}
+    applyTheme(themeOrder[(themeOrder.indexOf(cur) + 1) % 3]);
+  });
+  (function(){
+    var t = 'auto';
+    try{ t = localStorage.getItem('paperTheme') || 'auto'; }catch(e){}
+    applyTheme(t);
+  })();
+
+  /* ── 임시 저장 불러오기 ── */
+  try{
+    var d = localStorage.getItem('paperDraft');
+    if (d){
+      var p = JSON.parse(d);
+      if (p && (p.raw || p.ag)){
+        S = p;
+        if (!S.msO) S.msO = {};
+        if (!S.gdO) S.gdO = {};
+        if (!S.journal) S.journal = {name:'', type:'', source:'', checked:'', editor:''};
+        if (!S.authors) S.authors = [];
+        if (!S.stmt) S.stmt = {coi:'', fund:'', irbName:'', irbNo:'', trialReg:''};
+        if (!S.cover) S.cover = {};
+        if (!S.decl) S.decl = {};
+        if (!S.docChk) S.docChk = {};
+        msEl.value = S.raw || ''; msEl.dispatchEvent(new Event('input'));
+        agEl.value = S.ag || ''; agEl.dispatchEvent(new Event('input'));
+        if (S.ms) renderMs();
+        if (S.gd) renderLimits();
+        maxStep = 5;
+        msg('s1msg','적어 두셨던 내용을 이 브라우저에서 불러왔습니다. 지우려면 5단계의 「임시 저장 지우기」를 누르십시오.');
+      }
+    }
+  }catch(e){}
+})();
+</script>

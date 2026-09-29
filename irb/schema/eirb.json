@@ -1,0 +1,2304 @@
+{
+ "fields": [
+  {
+   "key": "reviewKind",
+   "label": "심의의뢰 종류",
+   "section": "심의의뢰 기본",
+   "type": "select",
+   "source": "derived",
+   "required": "always",
+   "options": [
+    "심의의뢰서",
+    "심의면제의뢰서"
+   ],
+   "hint": "2단계에서 고르신 갈래로 자동 정해집니다.",
+   "exemptForm": true,
+   "redBar": "상단",
+   "autoFromRoute": true
+  },
+  {
+   "key": "titleKo",
+   "label": "연구과제명(국문)",
+   "section": "심의의뢰 기본",
+   "type": "text",
+   "source": "plan",
+   "required": "always",
+   "hint": "「기초과제관리」에 등록한 국문 제목 그대로. 의뢰서에서는 검색해서 고르는 칸이라 직접 타이핑이 안 됩니다.",
+   "exemptForm": true,
+   "redBar": "상단",
+   "ask": "연구 제목을 국문으로 어떻게 등록하셨습니까? (기초과제관리에 등록한 그대로)"
+  },
+  {
+   "key": "titleEn",
+   "label": "연구과제명(영문)",
+   "section": "심의의뢰 기본",
+   "type": "text",
+   "source": "plan",
+   "required": "always",
+   "requiredWhen": "영문 제목이 있는 경우",
+   "hint": "기초과제 등록 때 함께 넣습니다(국문·영문 둘 다 필수). 의뢰서에는 따라 들어옵니다.",
+   "exemptForm": true,
+   "redBar": "상단",
+   "ask": "같은 제목의 영문은 무엇입니까? 기초과제 등록 때 함께 넣으신 것을 적으시면 됩니다."
+  },
+  {
+   "key": "protocolNo",
+   "label": "Protocol No",
+   "section": "심의의뢰 기본",
+   "type": "text",
+   "source": "plan",
+   "required": "optional",
+   "exemptForm": true
+  },
+  {
+   "key": "irbNo",
+   "label": "IRB No",
+   "section": "심의의뢰 기본",
+   "type": "text",
+   "source": "system",
+   "required": "optional",
+   "exemptForm": true
+  },
+  {
+   "key": "sopVersion",
+   "label": "SOP버전",
+   "section": "심의의뢰 기본",
+   "type": "text",
+   "source": "system",
+   "required": "optional",
+   "exemptForm": true
+  },
+  {
+   "key": "piName",
+   "label": "연구책임자 성명",
+   "section": "연구책임자·참여연구진",
+   "type": "person",
+   "source": "plan",
+   "required": "always",
+   "exemptForm": true,
+   "redBar": "상단",
+   "ask": "연구책임자는 누구십니까?"
+  },
+  {
+   "key": "piDept",
+   "label": "연구책임자 소속",
+   "section": "연구책임자·참여연구진",
+   "type": "text",
+   "source": "plan",
+   "required": "conditional",
+   "exemptForm": true,
+   "requiredWhen": "권장"
+  },
+  {
+   "key": "piPosition",
+   "label": "연구책임자 직위",
+   "section": "연구책임자·참여연구진",
+   "type": "text",
+   "source": "plan",
+   "required": "conditional",
+   "requiredWhen": "계획서에 기재된 경우",
+   "exemptForm": true
+  },
+  {
+   "key": "piContact",
+   "label": "연구책임자 연락처",
+   "section": "연구책임자·참여연구진",
+   "type": "text",
+   "source": "plan",
+   "required": "conditional",
+   "exemptForm": true
+  },
+  {
+   "key": "piEmail",
+   "label": "연구책임자 E-Mail",
+   "section": "연구책임자·참여연구진",
+   "type": "text",
+   "source": "plan",
+   "required": "conditional",
+   "exemptForm": true
+  },
+  {
+   "key": "coInvestigators",
+   "label": "참여연구진",
+   "section": "연구책임자·참여연구진",
+   "type": "people",
+   "source": "plan",
+   "required": "conditional",
+   "requiredWhen": "공동연구자가 있는 경우",
+   "hint": "화면의 9개 열을 그대로 채웁니다. 교육이수 유효기간은 아래 규칙으로 자동 점검합니다.",
+   "columns": [
+    "참여구분",
+    "참여자명",
+    "참여자소속",
+    "참여자직위",
+    "연락처",
+    "이메일",
+    "최근교육이수일자",
+    "교육이수내역",
+    "관리약사/의료기기관리자 역할"
+   ]
+  },
+  {
+   "key": "drugManager",
+   "label": "관리약사/의료기기 관리자 지정",
+   "section": "연구책임자·참여연구진",
+   "type": "multiselect",
+   "source": "ask",
+   "required": "conditional",
+   "requiredWhen": "의약품/의료기기 임상시험",
+   "options": [
+    "병원장이 지정한 관리약사(의료기기 관리자)",
+    "관리약사(의료기기 관리자) 업무를 연구진에게 위임"
+   ],
+   "ask": "의약품·의료기기 임상시험인 경우, 관리약사를 병원 지정으로 할까요, 연구진 위임으로 할까요?",
+   "trialOnly": true,
+   "hint": "화면은 체크박스 2개입니다 — 둘 다 해당 없으면 비워 둡니다. 위임을 고르면 업무위임 사유서를 따로 냅니다."
+  },
+  {
+   "key": "lawCategory",
+   "label": "생명윤리법 분류",
+   "section": "생명윤리법 분류",
+   "type": "select",
+   "source": "plan",
+   "required": "always",
+   "options": [
+    "인간대상연구",
+    "인체유래물연구"
+   ],
+   "hint": "인체유래물+개인정보 함께 이용 시 인간대상연구",
+   "exemptForm": true,
+   "redBar": "상단",
+   "ask": "사람을 대상으로 하는 연구입니까, 사람에게서 얻은 검체·조직을 쓰는 연구입니까?"
+  },
+  {
+   "key": "subjectKind",
+   "label": "연구대상",
+   "section": "연구대상",
+   "type": "multiselect",
+   "source": "plan",
+   "required": "always",
+   "options": [
+    "인간",
+    "인체유래물",
+    "후향적 의무기록",
+    "기타"
+   ],
+   "hint": "화면의 부모 체크박스 4개입니다. 고르시면 그 아래 세부 칸이 나타납니다.",
+   "redBar": "상단·연구대상 블록",
+   "ask": "무엇을 대상으로 하십니까? 해당하는 것을 모두 고르십시오."
+  },
+  {
+   "key": "subjectHuman",
+   "label": "인간 대상 구분",
+   "section": "연구대상",
+   "type": "multiselect",
+   "source": "plan",
+   "required": "conditional",
+   "requiredWhen": "전향적 연구",
+   "options": [
+    "건강인",
+    "환자",
+    "취약한 연구대상자"
+   ],
+   "showWhen": {
+    "key": "subjectKind",
+    "op": "has",
+    "value": "인간"
+   }
+  },
+  {
+   "key": "vulnerable",
+   "label": "취약한 연구대상자 범주",
+   "section": "연구대상",
+   "type": "multiselect",
+   "source": "plan",
+   "required": "conditional",
+   "requiredWhen": "취약군 포함 시",
+   "options": [
+    "미성년자",
+    "임산부",
+    "태아",
+    "신생아",
+    "손상된 동의능력을 가진 자",
+    "연구기관,의뢰자 등의 피고용인",
+    "책임연구자의 연구원이나 학생",
+    "집단 시설에 수용된 자",
+    "말기 환자",
+    "응급상황에 처한 환자",
+    "경제적 곤궁자(실업자,노숙자 등)"
+   ],
+   "showWhen": {
+    "key": "subjectHuman",
+    "op": "has",
+    "value": "취약한 연구대상자"
+   }
+  },
+  {
+   "key": "materialKind",
+   "label": "인체유래물 수집 방식",
+   "section": "연구대상",
+   "type": "select",
+   "source": "plan",
+   "required": "conditional",
+   "requiredWhen": "인체유래물연구",
+   "options": [
+    "전향적 인체유래물 수집",
+    "보관된 인체유래물 이용"
+   ],
+   "showWhen": {
+    "key": "subjectKind",
+    "op": "has",
+    "value": "인체유래물"
+   }
+  },
+  {
+   "key": "retrospectiveRecord",
+   "label": "후향적 의무기록 여부(구 항목 · subjectKind로 대체)",
+   "section": "연구대상",
+   "type": "boolean",
+   "source": "plan",
+   "required": "optional",
+   "requiredWhen": "의무기록 연구",
+   "deprecated": true
+  },
+  {
+   "key": "studyKind",
+   "label": "연구 종류",
+   "section": "연구종류",
+   "type": "select",
+   "source": "plan",
+   "required": "conditional",
+   "options": [
+    "임상시험",
+    "임상시험외 연구"
+   ],
+   "hint": "의도적 중재 여부로 판단",
+   "requiredWhen": "권장"
+  },
+  {
+   "key": "nonTrialKind",
+   "label": "임상시험 외 연구 세부",
+   "section": "연구종류",
+   "type": "multiselect",
+   "source": "plan",
+   "required": "conditional",
+   "requiredWhen": "임상시험 외 연구",
+   "options": [
+    "보관된 검체연구",
+    "조직 및 혈액연구",
+    "의무기록을 이용한 환자군 연구",
+    "의료시술",
+    "설문조사",
+    "관찰연구(단면조사연구,환자대조군연구,코호트연구 등)",
+    "시판후 사용성적 조사(PMS)",
+    "기타연구"
+   ]
+  },
+  {
+   "key": "trialTarget",
+   "label": "임상시험 대상(의약품/의료기기)",
+   "section": "연구종류",
+   "type": "select",
+   "source": "ask",
+   "required": "conditional",
+   "requiredWhen": "임상시험",
+   "options": [
+    "의약품",
+    "생물학적제제",
+    "세포치료제",
+    "건강기능식품",
+    "화장품",
+    "의료기기",
+    "기타"
+   ],
+   "ask": "임상시험 대상은 무엇인가요? 일반명·상품명(의료기기는 분류번호·등급)도 알려주세요.",
+   "trialOnly": true
+  },
+  {
+   "key": "drugPhase",
+   "label": "의약품 임상시험 단계",
+   "section": "연구종류",
+   "type": "select",
+   "source": "ask",
+   "required": "conditional",
+   "requiredWhen": "의약품 임상시험",
+   "options": [
+    "제1상",
+    "제1/2상",
+    "제2상",
+    "제2/3상",
+    "제3상",
+    "제4상",
+    "생물학적동등성",
+    "학술연구",
+    "기타"
+   ],
+   "trialOnly": true
+  },
+  {
+   "key": "mfdsApproval",
+   "label": "식약처 승인 대상 여부",
+   "section": "연구종류",
+   "type": "select",
+   "source": "ask",
+   "required": "conditional",
+   "requiredWhen": "의약품/의료기기 임상시험",
+   "options": [
+    "승인 대상",
+    "승인 제외 대상"
+   ],
+   "ask": "식약처 승인 대상인가요? (승인일 미기재 시 미첨부 사유서 필요)",
+   "trialOnly": true
+  },
+  {
+   "key": "studyScope",
+   "label": "연구 구분",
+   "section": "연구구분·주체·규모",
+   "type": "select",
+   "source": "plan",
+   "required": "always",
+   "options": [
+    "단일 기관 연구",
+    "국내 다기관 연구",
+    "다국가 다기관 연구"
+   ],
+   "exemptForm": true,
+   "redBar": "연구 구분 블록",
+   "ask": "이 병원 한 곳에서만 하십니까, 여러 기관이 함께 하십니까?"
+  },
+  {
+   "key": "isCoordinator",
+   "label": "본 기관 PI의 총괄책임자 여부",
+   "section": "연구구분·주체·규모",
+   "type": "boolean",
+   "source": "ask",
+   "required": "always",
+   "requiredWhen": "다기관 연구",
+   "ask": "선생님이 국내 참여기관 전체의 총괄 책임자이십니까?",
+   "exemptForm": true,
+   "redBar": "연구 구분 블록",
+   "showWhenAny": [
+    {
+     "key": "studyScope",
+     "op": "has",
+     "value": "국내 다기관 연구"
+    },
+    {
+     "key": "studyScope",
+     "op": "has",
+     "value": "다국가 다기관 연구"
+    }
+   ]
+  },
+  {
+   "key": "sponsorType",
+   "label": "연구 주체",
+   "section": "연구구분·주체·규모",
+   "type": "select",
+   "source": "plan",
+   "required": "always",
+   "options": [
+    "의뢰자(Sponsor)주도 연구",
+    "연구자(Investigator)주도 연구"
+   ],
+   "exemptForm": true,
+   "redBar": "연구주체",
+   "ask": "연구비를 대는 회사·기관이 설계까지 주도합니까(의뢰자 주도), 선생님이 직접 설계하셨습니까(연구자 주도)?"
+  },
+  {
+   "key": "totalSubjects",
+   "label": "전체 연구대상자 수",
+   "section": "연구구분·주체·규모",
+   "type": "number",
+   "source": "plan",
+   "required": "always",
+   "requiredWhen": "전향적 대상자 등록",
+   "exemptForm": true,
+   "redBar": "전향적 연구대상자",
+   "requiredNotWhen": [
+    {
+     "key": "contactSubject",
+     "op": "eq",
+     "value": "아니오"
+    }
+   ],
+   "hint": "전향적으로 등록하는 대상자가 없는 후향적 연구라면 0을 적으십시오. (건수는 아래 「후향적」 칸에 적습니다)",
+   "ask": "전향적으로 새로 등록할 연구대상자는 모두 몇 명입니까? (후향적 연구라 새로 등록하지 않으면 0)"
+  },
+  {
+   "key": "localSubjects",
+   "label": "본기관 예정 대상자 수",
+   "section": "연구구분·주체·규모",
+   "type": "number",
+   "source": "plan",
+   "required": "always",
+   "exemptForm": true,
+   "redBar": "전향적 연구대상자",
+   "requiredNotWhen": [
+    {
+     "key": "contactSubject",
+     "op": "eq",
+     "value": "아니오"
+    }
+   ],
+   "hint": "전향적으로 등록하는 대상자가 없는 후향적 연구라면 0을 적으십시오. (건수는 아래 「후향적」 칸에 적습니다)",
+   "ask": "그중 이 병원에서 등록할 인원은 몇 명입니까? (단일기관이면 전체와 같습니다)"
+  },
+  {
+   "key": "materialCount",
+   "label": "인체유래물/의무기록 건수(구 항목 · 사용 안 함)",
+   "section": "연구구분·주체·규모",
+   "type": "text",
+   "source": "plan",
+   "required": "optional",
+   "requiredWhen": "인체유래물·의무기록 연구",
+   "hint": "실제 화면은 의무기록·인체유래물을 각각 전체/본기관으로 받는다 → 아래 4개 항목 사용",
+   "deprecated": true
+  },
+  {
+   "key": "period",
+   "label": "연구예정기간(구 항목 · 사용 안 함)",
+   "section": "연구구분·주체·규모",
+   "type": "text",
+   "source": "plan",
+   "required": "optional",
+   "hint": "IRB 승인일 ~ (계획서와 동일하게)",
+   "deprecated": true
+  },
+  {
+   "key": "recruitMethod",
+   "label": "연구대상자 모집방법",
+   "section": "연구의 특성",
+   "type": "textarea",
+   "source": "plan",
+   "required": "always",
+   "requiredWhen": "전향적 모집",
+   "redBar": "연구의 특성",
+   "requiredNotWhen": [
+    {
+     "key": "contactSubject",
+     "op": "eq",
+     "value": "아니오"
+    }
+   ],
+   "hint": "대상자와 접촉이 없는 후향적 연구라면 「해당 없음」이라고 적으시면 됩니다.",
+   "ask": "대상자를 어떻게 찾아 모으십니까? (예: 외래 진료 중 설명 후 동의 / 후향적 연구라 모집 절차가 없으면 「해당 없음」)"
+  },
+  {
+   "key": "recruitDoc",
+   "label": "모집문건 사용 여부",
+   "section": "연구의 특성",
+   "type": "boolean",
+   "source": "ask",
+   "required": "always",
+   "requiredWhen": "전향적 모집",
+   "ask": "포스터·안내문 같은 모집문건을 쓰십니까?",
+   "redBar": "연구의 특성",
+   "requiredNotWhen": [
+    {
+     "key": "contactSubject",
+     "op": "eq",
+     "value": "아니오"
+    }
+   ],
+   "hint": "대상자를 새로 모집하지 않는 연구라면 「아니오」입니다."
+  },
+  {
+   "key": "consentType",
+   "label": "연구대상자 동의 취득",
+   "section": "연구의 특성",
+   "type": "multiselect",
+   "source": "plan",
+   "required": "always",
+   "options": [
+    "서면",
+    "구두(사유서 첨부)",
+    "불필요(사유서 첨부)"
+   ],
+   "hint": "E-IRB는 복수 선택이 가능하다",
+   "exemptForm": true,
+   "redBar": "연구의 특성",
+   "ask": "동의를 어떻게 받으십니까? 해당하는 것을 모두 고르십시오. 「불필요」를 고르시면 면제 점검표가 열립니다."
+  },
+  {
+   "key": "contactSubject",
+   "label": "연구대상자와 접촉 여부",
+   "section": "연구의 특성",
+   "type": "boolean",
+   "source": "plan",
+   "required": "always",
+   "redBar": "연구의 특성",
+   "ask": "연구 때문에 대상자를 직접 만나거나 연락하십니까? 기록만 보신다면 「아니오」입니다."
+  },
+  {
+   "key": "intervention",
+   "label": "시술/투약/검사 등 중재 여부",
+   "section": "연구의 특성",
+   "type": "boolean",
+   "source": "plan",
+   "required": "always",
+   "redBar": "연구의 특성",
+   "ask": "연구 목적으로 무엇을 투여하거나, 시술하거나, 추가 검사를 하십니까? 평소 진료대로만 하신다면 「아니오」입니다."
+  },
+  {
+   "key": "interventionType",
+   "label": "중재의 침습성",
+   "section": "연구의 특성",
+   "type": "select",
+   "source": "plan",
+   "required": "always",
+   "requiredWhen": "중재가 있는 경우",
+   "options": [
+    "침습적",
+    "비침습적",
+    "해당 없음"
+   ],
+   "redBar": "연구의 특성",
+   "ask": "그 중재가 몸을 찌르거나 들어가는 것입니까(채혈·조직검사 등), 아니면 그렇지 않습니까?"
+  },
+  {
+   "key": "storeMaterial",
+   "label": "수집 인체유래물 보관 여부",
+   "section": "연구의 특성",
+   "type": "boolean",
+   "source": "ask",
+   "required": "always",
+   "requiredWhen": "인체유래물 수집",
+   "ask": "모은 검체를 연구가 끝난 뒤에도 보관하십니까?",
+   "redBar": "연구의 특성"
+  },
+  {
+   "key": "geneticInfo",
+   "label": "유전학적 정보 수집·보관 여부",
+   "section": "연구의 특성",
+   "type": "boolean",
+   "source": "plan",
+   "required": "always",
+   "requiredWhen": "인체유래물/유전 연구",
+   "redBar": "연구의 특성",
+   "ask": "유전자 검사 결과처럼 유전 정보를 모으거나 보관하십니까?"
+  },
+  {
+   "key": "coi",
+   "label": "중대한 경제적 이해관계 (본인과 직계 가족 모두 포함)",
+   "section": "이해충돌",
+   "type": "multiselect",
+   "source": "ask",
+   "required": "conditional",
+   "options": [
+    "① 연구 결과에 영향 줄 정도의 경제적 보상",
+    "② 1,000만원 초과 연구비·교육비·자문비 등",
+    "③ 환산이 어려운 주식·소유권 지분",
+    "④ 1,000만원 상당 또는 5% 초과 주식·소유권 지분",
+    "⑤ 지원기관의 공식 직함",
+    "⑥ 특허·상표·독점·로열티 등 경제적 이득",
+    "⑦ 가까운 가족(부모·배우자·자녀)의 동일 관계",
+    "⑧ 상기 모든 항목이 해당되지 않음"
+   ],
+   "ask": "연구비를 준 기관과 선생님(또는 부모·배우자·자녀)이 돈으로 얽혀 있습니까? 없으면 ⑧을 고르십시오.",
+   "optionHelp": {
+    "⑧ 상기 모든 항목이 해당되지 않음": "상기 모든 항목이 해당되지 않음",
+    "① 연구 결과에 영향 줄 정도의 경제적 보상": "연구 결과에 영향을 미칠 수 있는 정도의 경제적 보상을 받았음",
+    "② 1,000만원 초과 연구비·교육비·자문비 등": "제한 없이 사용할 수 있는 연구비나 교육비, 기구나 장비, 자문비 또는 사례금 등의 형태로 지원기관(Sponsor)으로부터 1,000만원이 넘는 비용을 제공 받았음",
+    "③ 환산이 어려운 주식·소유권 지분": "통상적인 방법으로 그 가치를 쉽게 환산하기 어려운, 지원기관(Sponsor)의 주식 지분 또는 시험약물이나 시험기기와 같은 연구 대상의 소유권 지분을 제공받았음",
+    "④ 1,000만원 상당 또는 5% 초과 주식·소유권 지분": "1,000만원 상당 또는 5%가 넘는 지원기관(Sponsor)의 주식 지분 또는 시험약물이나 시험기기와 같은 연구 대상의 소유권 지분을 제공받았음",
+    "⑤ 지원기관의 공식 직함": "지원기관(Sponsor)의 공식적인 직함을 가지고 있음 (예: 사장, 자문역, 고문 등)",
+    "⑥ 특허·상표·독점·로열티 등 경제적 이득": "시험약물 또는 시험기기와 같은 연구대상과 관련된 경제적 이득을 제공받았음 (특허권, 상표권, 독점권, 특허사용료, 상품화에 따른 로열티와 같은 것들을 포함하나 이에 한정하지 않음)",
+    "⑦ 가까운 가족(부모·배우자·자녀)의 동일 관계": "본인의 가까운 가족(부모, 배우자, 자녀) 또는 가족이 소속된 회사가 위에 기술된 것과 같은 관계를 가지고 있음"
+   },
+   "hint": "번호는 E-IRB 화면의 체크박스 순서입니다. 고르시면 화면 원문이 그대로 아래에 뜹니다.",
+   "requiredWhen": "권장"
+  },
+  {
+   "key": "fundOrgType",
+   "label": "연구지원기관 구분",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "select",
+   "source": "plan",
+   "required": "conditional",
+   "options": [
+    "정부기관",
+    "기업체",
+    "원내공모",
+    "기타",
+    "없음"
+   ],
+   "exemptForm": true,
+   "requiredWhen": "권장"
+  },
+  {
+   "key": "fundOrgName",
+   "label": "연구지원기관명",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "plan",
+   "required": "conditional",
+   "requiredWhen": "지원기관이 있는 경우",
+   "exemptForm": true
+  },
+  {
+   "key": "subjectSupport",
+   "label": "연구대상자 지원내역",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "multiselect",
+   "source": "plan",
+   "required": "always",
+   "options": [
+    "없음",
+    "의약품",
+    "의료기기",
+    "교통비",
+    "참여보상비",
+    "진료·검사비",
+    "기타"
+   ],
+   "redBar": "연구대상자 지원내역",
+   "ask": "대상자에게 무엇을 드립니까? 아무것도 없으면 「없음」입니다."
+  },
+  {
+   "key": "sponsorOrg",
+   "label": "의뢰기관(Sponsor)",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "plan",
+   "required": "conditional",
+   "requiredWhen": "의뢰자주도/다기관",
+   "exemptForm": true
+  },
+  {
+   "key": "cra",
+   "label": "과제담당자(CRA) 정보",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "requiredWhen": "임상시험 모니터링",
+   "ask": "모니터링 담당 CRA(회사·담당자·연락처)가 있나요?",
+   "trialOnly": true,
+   "exemptForm": true
+  },
+  {
+   "key": "localContact",
+   "label": "병원 내 연구담당자",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "person",
+   "source": "ask",
+   "required": "conditional",
+   "ask": "병원 내 긴급 연락 가능한 담당자(성명·소속·이메일)는 누구인가요?",
+   "hint": "대개 연구책임자 본인입니다. 아래 단추로 한 번에 채우실 수 있습니다.",
+   "copyFromPI": [
+    "piName",
+    "piDept",
+    "piEmail"
+   ],
+   "requiredWhen": "권장"
+  },
+  {
+   "key": "feeContact",
+   "label": "심의 접수료 지급 담당자",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "person",
+   "source": "ask",
+   "required": "conditional",
+   "requiredWhen": "접수료 발생 시",
+   "ask": "심의 접수료 관련 연락 담당자는 누구인가요?"
+  },
+  {
+   "key": "objective",
+   "label": "연구 목적",
+   "section": "연구계획 내용",
+   "type": "textarea",
+   "source": "plan",
+   "required": "conditional",
+   "sharedWithSummary": true,
+   "requiredWhen": "권장"
+  },
+  {
+   "key": "design",
+   "label": "연구 설계",
+   "section": "연구계획 내용",
+   "type": "textarea",
+   "source": "plan",
+   "required": "conditional",
+   "sharedWithSummary": true,
+   "requiredWhen": "권장"
+  },
+  {
+   "key": "targetDisease",
+   "label": "대상 질환명",
+   "section": "연구계획 내용",
+   "type": "text",
+   "source": "plan",
+   "required": "always",
+   "sharedWithSummary": true,
+   "redBar": "요약 서식",
+   "ask": "어떤 질환을 대상으로 하십니까?"
+  },
+  {
+   "key": "inclusion",
+   "label": "선정기준",
+   "section": "연구계획 내용",
+   "type": "textarea",
+   "source": "plan",
+   "required": "always",
+   "requiredWhen": "인간대상 연구",
+   "sharedWithSummary": true,
+   "redBar": "요약 서식",
+   "ask": "어떤 사람을 넣으십니까? (선정기준)"
+  },
+  {
+   "key": "exclusion",
+   "label": "제외기준",
+   "section": "연구계획 내용",
+   "type": "textarea",
+   "source": "plan",
+   "required": "always",
+   "requiredWhen": "인간대상 연구",
+   "sharedWithSummary": true,
+   "redBar": "요약 서식",
+   "ask": "어떤 사람을 빼십니까? (제외기준)"
+  },
+  {
+   "key": "dropCriteria",
+   "label": "중지기준",
+   "section": "연구계획 내용",
+   "type": "textarea",
+   "source": "plan",
+   "required": "conditional",
+   "requiredWhen": "중재 연구",
+   "sharedWithSummary": true
+  },
+  {
+   "key": "sampleBasis",
+   "label": "대상자 수 산출근거",
+   "section": "연구계획 내용",
+   "type": "textarea",
+   "source": "plan",
+   "required": "conditional",
+   "requiredWhen": "가설검정 연구",
+   "sharedWithSummary": true
+  },
+  {
+   "key": "method",
+   "label": "연구 방법",
+   "section": "연구계획 내용",
+   "type": "textarea",
+   "source": "plan",
+   "required": "always",
+   "sharedWithSummary": true,
+   "redBar": "요약 서식",
+   "ask": "연구를 어떤 순서로 진행하십니까? 자료를 어디서 어떻게 모으는지까지 적어 주십시오."
+  },
+  {
+   "key": "efficacy",
+   "label": "유효성 평가",
+   "section": "연구계획 내용",
+   "type": "textarea",
+   "source": "plan",
+   "required": "conditional",
+   "requiredWhen": "임상시험",
+   "sharedWithSummary": true,
+   "redBar": "요약 서식"
+  },
+  {
+   "key": "safety",
+   "label": "안전성 평가",
+   "section": "연구계획 내용",
+   "type": "textarea",
+   "source": "plan",
+   "required": "conditional",
+   "requiredWhen": "임상시험",
+   "sharedWithSummary": true,
+   "redBar": "요약 서식"
+  },
+  {
+   "key": "statistics",
+   "label": "통계분석방법",
+   "section": "연구계획 내용",
+   "type": "textarea",
+   "source": "plan",
+   "required": "always",
+   "sharedWithSummary": true,
+   "redBar": "요약 서식",
+   "ask": "어떤 통계 방법을 쓰십니까? 유의수준과 보정변수도 함께 적어 주십시오."
+  },
+  {
+   "key": "budgetItems",
+   "label": "예산 내역(구 항목 · 표로 대체)",
+   "section": "예산",
+   "type": "money",
+   "source": "ask",
+   "required": "optional",
+   "requiredWhen": "연구비 지원기관이 있는 경우",
+   "hint": "대상자 지원(진료비·검사비·교통비)은 재료비에 구체적으로",
+   "ask": "연구 예산 항목별 금액이 있나요? 없으면 0원으로 처리합니다.",
+   "deprecated": true
+  },
+  {
+   "key": "submitRoute",
+   "label": "제출경로",
+   "section": "심의의뢰 기본",
+   "type": "select",
+   "source": "ask",
+   "required": "always",
+   "options": [
+    "화순전남대학교병원",
+    "타기관"
+   ],
+   "ask": "이 병원에 내십니까, 협약을 맺은 다른 기관을 거쳐 내십니까?",
+   "exemptForm": true,
+   "redBar": "상단"
+  },
+  {
+   "key": "subjectEtc",
+   "label": "연구대상 기타(구 항목 · subjectKind로 대체)",
+   "section": "연구대상",
+   "type": "multiselect",
+   "source": "plan",
+   "required": "optional",
+   "options": [
+    "기타"
+   ],
+   "deprecated": true
+  },
+  {
+   "key": "subjectEtcText",
+   "label": "연구대상 기타 내용",
+   "section": "연구대상",
+   "type": "text",
+   "source": "plan",
+   "required": "optional",
+   "showWhen": {
+    "key": "subjectKind",
+    "op": "has",
+    "value": "기타"
+   }
+  },
+  {
+   "key": "trialGeneralName",
+   "label": "임상시험 대상 일반명",
+   "section": "연구종류",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "trialOnly": true
+  },
+  {
+   "key": "trialProductName",
+   "label": "임상시험 대상 상품명",
+   "section": "연구종류",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "trialOnly": true
+  },
+  {
+   "key": "deviceClass",
+   "label": "의료기기 분류번호/등급",
+   "section": "연구종류",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "trialOnly": true
+  },
+  {
+   "key": "mfdsApprovalDate",
+   "label": "식약처 계획서 승인일",
+   "section": "연구종류",
+   "type": "date",
+   "source": "ask",
+   "required": "conditional",
+   "trialOnly": true
+  },
+  {
+   "key": "trialPurpose",
+   "label": "시험목적",
+   "section": "연구종류",
+   "type": "multiselect",
+   "source": "ask",
+   "required": "conditional",
+   "options": [
+    "학술용",
+    "국내허가용(MFDS)",
+    "해외허가용"
+   ],
+   "trialOnly": true
+  },
+  {
+   "key": "trialCountries",
+   "label": "시험목적 국가명",
+   "section": "연구종류",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "trialOnly": true
+  },
+  {
+   "key": "domesticSiteCount",
+   "label": "국내 다기관 참여기관 수",
+   "section": "연구구분·주체·규모",
+   "type": "text",
+   "source": "plan",
+   "required": "conditional",
+   "exemptForm": true
+  },
+  {
+   "key": "multiCountryCount",
+   "label": "다국가 참여국가 수",
+   "section": "연구구분·주체·규모",
+   "type": "text",
+   "source": "plan",
+   "required": "conditional",
+   "exemptForm": true
+  },
+  {
+   "key": "multiSiteCount",
+   "label": "다국가 참여기관 수",
+   "section": "연구구분·주체·규모",
+   "type": "text",
+   "source": "plan",
+   "required": "conditional",
+   "exemptForm": true
+  },
+  {
+   "key": "isGlobalPI",
+   "label": "본 기관 PI의 Global PI 여부",
+   "section": "연구구분·주체·규모",
+   "type": "boolean",
+   "source": "ask",
+   "required": "always",
+   "exemptForm": true,
+   "redBar": "연구 구분 블록",
+   "showWhen": {
+    "key": "studyScope",
+    "op": "has",
+    "value": "다국가 다기관 연구"
+   },
+   "ask": "선생님이 이 연구 전체(전 세계)의 총괄 책임자이십니까?"
+  },
+  {
+   "key": "periodEnd",
+   "label": "연구예정기간 종료일",
+   "section": "연구구분·주체·규모",
+   "type": "date",
+   "source": "plan",
+   "required": "always",
+   "hint": "시작일은 E-IRB가 「IRB 승인일자」로 고정합니다. 종료일만 적으시면 됩니다.",
+   "ask": "연구를 언제까지 하실 계획입니까? 시작은 IRB 승인일로 자동 잡힙니다.",
+   "exemptForm": true,
+   "redBar": "연구예정기간"
+  },
+  {
+   "key": "recruitPlace",
+   "label": "모집문건 게시장소",
+   "section": "연구의 특성",
+   "type": "multiselect",
+   "source": "ask",
+   "required": "always",
+   "options": [
+    "원내",
+    "원외"
+   ],
+   "redBar": "연구의 특성",
+   "showWhen": {
+    "key": "recruitDoc",
+    "op": "eq",
+    "value": "예"
+   },
+   "ask": "모집문건을 어디에 붙이십니까?"
+  },
+  {
+   "key": "recruitMedia",
+   "label": "모집문건 게시방법",
+   "section": "연구의 특성",
+   "type": "multiselect",
+   "source": "ask",
+   "required": "always",
+   "options": [
+    "포스터 또는 팜플렛",
+    "인터넷 매체",
+    "기타"
+   ],
+   "redBar": "연구의 특성",
+   "showWhen": {
+    "key": "recruitDoc",
+    "op": "eq",
+    "value": "예"
+   },
+   "ask": "어떤 형태로 알리십니까?"
+  },
+  {
+   "key": "partnerOrg",
+   "label": "협약기관",
+   "section": "심의의뢰 기본",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "requiredWhen": "제출경로가 타기관인 경우",
+   "ask": "협약기관명을 적어 주세요.",
+   "exemptForm": true
+  },
+  {
+   "key": "firstApprovalDate",
+   "label": "최초승인일",
+   "section": "심의의뢰 기본",
+   "type": "date",
+   "source": "system",
+   "required": "optional",
+   "hint": "E-IRB가 자동 부여",
+   "exemptForm": true
+  },
+  {
+   "key": "piEduDate",
+   "label": "연구책임자 교육이수일",
+   "section": "연구책임자·참여연구진",
+   "type": "date",
+   "source": "ask",
+   "required": "conditional",
+   "ask": "연구윤리교육을 언제 이수하셨습니까? (임상시험 외 3년 이내 / 임상시험 종사자는 매년)",
+   "exemptForm": true,
+   "requiredWhen": "권장"
+  },
+  {
+   "key": "competitiveRecruit",
+   "label": "경쟁적 모집 여부",
+   "section": "연구구분·주체·규모",
+   "type": "boolean",
+   "source": "ask",
+   "required": "always",
+   "requiredWhen": "전향적 대상자 등록이 있는 경우",
+   "ask": "여러 기관이 먼저 채우는 대로 마감하는 방식입니까? (경쟁적 모집)",
+   "exemptForm": true,
+   "redBar": "전향적 연구대상자",
+   "requiredNotWhen": [
+    {
+     "key": "contactSubject",
+     "op": "eq",
+     "value": "아니오"
+    }
+   ],
+   "hint": "전향적으로 대상자를 등록하는 연구에만 해당합니다."
+  },
+  {
+   "key": "recordTotal",
+   "label": "후향적 의무기록/인체유래물 — 전체(건)",
+   "section": "연구구분·주체·규모",
+   "type": "number",
+   "source": "plan",
+   "required": "always",
+   "requiredWhen": "의무기록을 이용하는 연구",
+   "exemptForm": true,
+   "redBar": "후향적 의무기록/인체유래물",
+   "ask": "후향적으로 볼 의무기록·검체는 모두 몇 건입니까?"
+  },
+  {
+   "key": "recordLocal",
+   "label": "후향적 의무기록/인체유래물 — 본 기관(건)",
+   "section": "연구구분·주체·규모",
+   "type": "number",
+   "source": "plan",
+   "required": "always",
+   "requiredWhen": "의무기록을 이용하는 연구",
+   "exemptForm": true,
+   "redBar": "후향적 의무기록/인체유래물",
+   "ask": "그중 이 병원 자료는 몇 건입니까?"
+  },
+  {
+   "key": "materialTotal",
+   "label": "전향적 인체유래물 등록 — 전체(건)",
+   "section": "연구구분·주체·규모",
+   "type": "number",
+   "source": "plan",
+   "required": "always",
+   "requiredWhen": "인체유래물을 이용하는 연구",
+   "exemptForm": true,
+   "redBar": "전향적 인체유래물",
+   "ask": "전향적으로 모을 인체유래물은 모두 몇 건입니까?"
+  },
+  {
+   "key": "materialLocal",
+   "label": "전향적 인체유래물 등록 — 본 기관(건)",
+   "section": "연구구분·주체·규모",
+   "type": "number",
+   "source": "plan",
+   "required": "always",
+   "requiredWhen": "인체유래물을 이용하는 연구",
+   "exemptForm": true,
+   "redBar": "전향적 인체유래물",
+   "ask": "그중 이 병원에서 모을 것은 몇 건입니까?"
+  },
+  {
+   "key": "craCompany",
+   "label": "CRA 회사명",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "trialOnly": true,
+   "exemptForm": true
+  },
+  {
+   "key": "craPosition",
+   "label": "CRA 직위",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "trialOnly": true,
+   "exemptForm": true
+  },
+  {
+   "key": "craDept",
+   "label": "CRA 부서",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "trialOnly": true,
+   "exemptForm": true
+  },
+  {
+   "key": "craEmail",
+   "label": "CRA 이메일",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "trialOnly": true,
+   "exemptForm": true
+  },
+  {
+   "key": "vulnerableFacility",
+   "label": "집단시설 종류",
+   "section": "연구대상",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": [
+    {
+     "key": "subjectHuman",
+     "op": "has",
+     "value": "취약한 연구대상자"
+    },
+    {
+     "key": "vulnerable",
+     "op": "has",
+     "value": "집단 시설에 수용된 자"
+    }
+   ],
+   "ask": "어떤 집단시설입니까? (화면의 「집단시설종류」 칸)"
+  },
+  {
+   "key": "nonTrialEtcText",
+   "label": "임상시험 외 — 기타연구 내용",
+   "section": "연구종류",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": {
+    "key": "nonTrialKind",
+    "op": "has",
+    "value": "기타연구"
+   }
+  },
+  {
+   "key": "drugPhaseEtc",
+   "label": "의약품 단계 — 기타 내용",
+   "section": "연구종류",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "trialOnly": true,
+   "showWhen": {
+    "key": "drugPhase",
+    "op": "eq",
+    "value": "기타"
+   }
+  },
+  {
+   "key": "deviceTrialType",
+   "label": "의료기기 임상시험 구분",
+   "section": "연구종류",
+   "type": "select",
+   "source": "ask",
+   "required": "conditional",
+   "options": [
+    "탐색 임상시험",
+    "확증 임상시험"
+   ],
+   "trialOnly": true,
+   "showWhen": {
+    "key": "trialTarget",
+    "op": "eq",
+    "value": "의료기기"
+   },
+   "ask": "의료기기 임상시험은 탐색입니까, 확증입니까?"
+  },
+  {
+   "key": "recruitPlaceInText",
+   "label": "게시장소 — 원내 상세",
+   "section": "연구의 특성",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": [
+    {
+     "key": "recruitDoc",
+     "op": "eq",
+     "value": "예"
+    },
+    {
+     "key": "recruitPlace",
+     "op": "has",
+     "value": "원내"
+    }
+   ]
+  },
+  {
+   "key": "recruitPlaceOutText",
+   "label": "게시장소 — 원외 상세",
+   "section": "연구의 특성",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": [
+    {
+     "key": "recruitDoc",
+     "op": "eq",
+     "value": "예"
+    },
+    {
+     "key": "recruitPlace",
+     "op": "has",
+     "value": "원외"
+    }
+   ]
+  },
+  {
+   "key": "recruitMediaInternetText",
+   "label": "게시방법 — 인터넷 매체 상세",
+   "section": "연구의 특성",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": [
+    {
+     "key": "recruitDoc",
+     "op": "eq",
+     "value": "예"
+    },
+    {
+     "key": "recruitMedia",
+     "op": "has",
+     "value": "인터넷 매체"
+    }
+   ]
+  },
+  {
+   "key": "recruitMediaEtcText",
+   "label": "게시방법 — 기타 상세",
+   "section": "연구의 특성",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": [
+    {
+     "key": "recruitDoc",
+     "op": "eq",
+     "value": "예"
+    },
+    {
+     "key": "recruitMedia",
+     "op": "has",
+     "value": "기타"
+    }
+   ]
+  },
+  {
+   "key": "coiAmount",
+   "label": "1000만원 초과 지원 — 금액(원)",
+   "section": "이해충돌",
+   "type": "number",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": {
+    "key": "coi",
+    "op": "has",
+    "value": "② 1,000만원 초과 연구비·교육비·자문비 등"
+   }
+  },
+  {
+   "key": "coiStockKind",
+   "label": "환산이 어려운 지분 — 종류",
+   "section": "이해충돌",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": {
+    "key": "coi",
+    "op": "has",
+    "value": "③ 환산이 어려운 주식·소유권 지분"
+   }
+  },
+  {
+   "key": "coiStockTotal",
+   "label": "환산이 어려운 지분 — 총 금액(보고 시점)",
+   "section": "이해충돌",
+   "type": "number",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": {
+    "key": "coi",
+    "op": "has",
+    "value": "③ 환산이 어려운 주식·소유권 지분"
+   }
+  },
+  {
+   "key": "coiEquityKind",
+   "label": "1,000만원·5% 초과 지분 — 종류",
+   "section": "이해충돌",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": {
+    "key": "coi",
+    "op": "has",
+    "value": "④ 1,000만원 상당 또는 5% 초과 주식·소유권 지분"
+   }
+  },
+  {
+   "key": "coiEquityTotal",
+   "label": "1,000만원·5% 초과 지분 — 총 금액(보고 시점)",
+   "section": "이해충돌",
+   "type": "number",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": {
+    "key": "coi",
+    "op": "has",
+    "value": "④ 1,000만원 상당 또는 5% 초과 주식·소유권 지분"
+   }
+  },
+  {
+   "key": "coiOrgName",
+   "label": "지원기관 공식 직함 — 기관명",
+   "section": "이해충돌",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": {
+    "key": "coi",
+    "op": "has",
+    "value": "⑤ 지원기관의 공식 직함"
+   }
+  },
+  {
+   "key": "coiOrgPosition",
+   "label": "지원기관 공식 직함 — 직위",
+   "section": "이해충돌",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": {
+    "key": "coi",
+    "op": "has",
+    "value": "⑤ 지원기관의 공식 직함"
+   }
+  },
+  {
+   "key": "coiIpKind",
+   "label": "특허·로열티 등 이득 — 종류",
+   "section": "이해충돌",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": {
+    "key": "coi",
+    "op": "has",
+    "value": "⑥ 특허·상표·독점·로열티 등 경제적 이득"
+   }
+  },
+  {
+   "key": "coiFamilyRelation",
+   "label": "가족의 이해관계 — 가족관계",
+   "section": "이해충돌",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": {
+    "key": "coi",
+    "op": "has",
+    "value": "⑦ 가까운 가족(부모·배우자·자녀)의 동일 관계"
+   }
+  },
+  {
+   "key": "subjectSupportEtcText",
+   "label": "연구대상자 지원내역 — 기타 내용",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "showWhen": {
+    "key": "subjectSupport",
+    "op": "has",
+    "value": "기타"
+   }
+  },
+  {
+   "key": "craMobile",
+   "label": "CRA 핸드폰",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "trialOnly": true,
+   "exemptForm": true
+  },
+  {
+   "key": "craPhone",
+   "label": "CRA 전화",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "trialOnly": true,
+   "exemptForm": true
+  },
+  {
+   "key": "craFax",
+   "label": "CRA 팩스",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "trialOnly": true,
+   "exemptForm": true
+  },
+  {
+   "key": "localContactDeptPos",
+   "label": "병원 내 연구담당자 — 소속/직위",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "requiredWhen": "권장"
+  },
+  {
+   "key": "localContactEmail",
+   "label": "병원 내 연구담당자 — 이메일",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional",
+   "requiredWhen": "권장"
+  },
+  {
+   "key": "feeContactEmail",
+   "label": "심의 접수료 담당자 — 이메일",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional"
+  },
+  {
+   "key": "feeContactEtc",
+   "label": "심의 접수료 담당자 — 기타정보",
+   "section": "지원기관·의뢰기관·담당자",
+   "type": "text",
+   "source": "ask",
+   "required": "conditional"
+  }
+ ],
+ "docs": [
+  {
+   "no": 1,
+   "label": "연구계획 심의 의뢰서",
+   "appCanGenerate": "partial",
+   "note": "본 앱이 필드를 채워 초안 제공",
+   "matrix": {
+    "SIT": "required",
+    "IIT": "required",
+    "observational": "required",
+    "survey": "required",
+    "human_material": "required",
+    "stored_specimen": "required",
+    "pms": "required",
+    "medical_record": "required"
+   },
+   "submitMethod": "e-IRB 전자서식"
+  },
+  {
+   "no": 2,
+   "label": "연구계획서 요약",
+   "appCanGenerate": "full",
+   "matrix": {
+    "SIT": "required",
+    "IIT": "required",
+    "observational": "required",
+    "survey": "required",
+    "human_material": "required",
+    "stored_specimen": "required",
+    "pms": "required",
+    "medical_record": "required"
+   },
+   "submitMethod": "e-IRB 전자서식"
+  },
+  {
+   "no": 3,
+   "label": "연구계획서",
+   "appCanGenerate": "partial",
+   "note": "계획서가 없으면 작성부터 지원",
+   "matrix": {
+    "SIT": "required",
+    "IIT": "required",
+    "observational": "required",
+    "survey": "required",
+    "human_material": "required",
+    "stored_specimen": "required",
+    "pms": "required",
+    "medical_record": "required"
+   },
+   "submitMethod": "파일 업로드"
+  },
+  {
+   "no": 4,
+   "label": "연구대상자 설명문 및 동의서",
+   "appCanGenerate": "full",
+   "matrix": {
+    "SIT": "required",
+    "IIT": "required",
+    "observational": "required",
+    "survey": "conditional",
+    "human_material": "required",
+    "stored_specimen": "conditional",
+    "pms": "conditional",
+    "medical_record": "conditional"
+   },
+   "submitMethod": "파일 업로드"
+  },
+  {
+   "no": 5,
+   "label": "연구대상자 동의 면제사유",
+   "appCanGenerate": "full",
+   "matrix": {
+    "SIT": "not",
+    "IIT": "not",
+    "observational": "not",
+    "survey": "conditional",
+    "human_material": "not",
+    "stored_specimen": "required",
+    "pms": "required",
+    "medical_record": "required"
+   },
+   "submitMethod": "e-IRB 전자서식"
+  },
+  {
+   "no": 6,
+   "label": "증례기록서 및 설문도구",
+   "appCanGenerate": "partial",
+   "matrix": {
+    "SIT": "required",
+    "IIT": "required",
+    "observational": "required",
+    "survey": "conditional",
+    "human_material": "conditional",
+    "stored_specimen": "required",
+    "pms": "required",
+    "medical_record": "required"
+   },
+   "submitMethod": "파일 업로드"
+  },
+  {
+   "no": 7,
+   "label": "연구대상자 모집문건",
+   "appCanGenerate": "partial",
+   "matrix": {
+    "SIT": "conditional",
+    "IIT": "conditional",
+    "observational": "conditional",
+    "survey": "conditional",
+    "human_material": "conditional",
+    "stored_specimen": "not",
+    "pms": "not",
+    "medical_record": "not"
+   },
+   "submitMethod": "파일 업로드"
+  },
+  {
+   "no": 8,
+   "label": "연구대상자 보상규약",
+   "appCanGenerate": "partial",
+   "matrix": {
+    "SIT": "required",
+    "IIT": "required",
+    "observational": "conditional",
+    "survey": "not",
+    "human_material": "not",
+    "stored_specimen": "not",
+    "pms": "not",
+    "medical_record": "not"
+   },
+   "submitMethod": "파일 업로드"
+  },
+  {
+   "no": 9,
+   "label": "연구대상자에게 제공되는 서류(환자일지, 설문지 등)",
+   "appCanGenerate": "partial",
+   "matrix": {
+    "SIT": "conditional",
+    "IIT": "conditional",
+    "observational": "conditional",
+    "survey": "required",
+    "human_material": "not",
+    "stored_specimen": "not",
+    "pms": "not",
+    "medical_record": "not"
+   },
+   "submitMethod": "파일 업로드"
+  },
+  {
+   "no": 10,
+   "label": "시험약(의료기기)의 개요",
+   "appCanGenerate": "none",
+   "matrix": {
+    "SIT": "required",
+    "IIT": "conditional",
+    "observational": "conditional",
+    "survey": "not",
+    "human_material": "not",
+    "stored_specimen": "not",
+    "pms": "not",
+    "medical_record": "not"
+   },
+   "submitMethod": "e-IRB 전자서식"
+  },
+  {
+   "no": 11,
+   "label": "임상시험자료집",
+   "appCanGenerate": "none",
+   "matrix": {
+    "SIT": "required",
+    "IIT": "conditional",
+    "observational": "conditional",
+    "survey": "not",
+    "human_material": "not",
+    "stored_specimen": "not",
+    "pms": "not",
+    "medical_record": "not"
+   },
+   "submitMethod": "파일 업로드"
+  },
+  {
+   "no": 12,
+   "label": "책임연구자 이력",
+   "appCanGenerate": "none",
+   "note": "E-IRB에서 1회 입력 시 자동 재사용",
+   "matrix": {
+    "SIT": "required",
+    "IIT": "required",
+    "observational": "required",
+    "survey": "required",
+    "human_material": "required",
+    "stored_specimen": "required",
+    "pms": "required",
+    "medical_record": "required"
+   },
+   "submitMethod": "e-IRB 전자서식"
+  },
+  {
+   "no": 13,
+   "label": "제조(수입)품목 허가증",
+   "appCanGenerate": "none",
+   "matrix": {
+    "SIT": "conditional",
+    "IIT": "conditional",
+    "observational": "conditional",
+    "survey": "not",
+    "human_material": "not",
+    "stored_specimen": "not",
+    "pms": "required",
+    "medical_record": "not"
+   },
+   "submitMethod": "파일 업로드"
+  },
+  {
+   "no": 14,
+   "label": "임상시험 식약처 승인서",
+   "appCanGenerate": "none",
+   "matrix": {
+    "SIT": "required",
+    "IIT": "conditional",
+    "observational": "not",
+    "survey": "not",
+    "human_material": "not",
+    "stored_specimen": "not",
+    "pms": "not",
+    "medical_record": "not"
+   },
+   "submitMethod": "파일 업로드"
+  },
+  {
+   "no": 15,
+   "label": "연구비 예산내역서",
+   "appCanGenerate": "partial",
+   "matrix": {
+    "SIT": "required",
+    "IIT": "required",
+    "observational": "conditional",
+    "survey": "conditional",
+    "human_material": "conditional",
+    "stored_specimen": "conditional",
+    "pms": "required",
+    "medical_record": "conditional"
+   },
+   "submitMethod": "e-IRB 전자서식"
+  }
+ ],
+ "summary": [
+  {
+   "key": "objective",
+   "label": "연구 목적 (일차·이차 목표)",
+   "type": "textarea"
+  },
+  {
+   "key": "design",
+   "label": "연구 설계",
+   "type": "textarea"
+  },
+  {
+   "key": "period",
+   "label": "연구예정기간",
+   "type": "text"
+  },
+  {
+   "key": "testDrug",
+   "label": "임상시험약물/의료기기 (시험약)",
+   "type": "text",
+   "clinicalOnly": true,
+   "showFor": "trial"
+  },
+  {
+   "key": "controlDrug",
+   "label": "대조약 (대조시험용)",
+   "type": "text",
+   "clinicalOnly": true,
+   "showFor": "trial"
+  },
+  {
+   "key": "targetDisease",
+   "label": "대상질환명",
+   "type": "text"
+  },
+  {
+   "key": "inclusion",
+   "label": "선정기준",
+   "type": "textarea"
+  },
+  {
+   "key": "exclusion",
+   "label": "제외기준",
+   "type": "textarea"
+  },
+  {
+   "key": "dropCriteria",
+   "label": "중지기준",
+   "type": "textarea"
+  },
+  {
+   "key": "subjectCount",
+   "label": "연구 대상수 (전체 / 본기관)",
+   "type": "text"
+  },
+  {
+   "key": "sampleBasis",
+   "label": "대상자 수 산출근거",
+   "type": "textarea"
+  },
+  {
+   "key": "method",
+   "label": "연구 방법",
+   "type": "textarea"
+  },
+  {
+   "key": "efficacy",
+   "label": "유효성 평가",
+   "type": "textarea",
+   "showFor": "outcome"
+  },
+  {
+   "key": "safety",
+   "label": "안전성 평가",
+   "type": "textarea",
+   "showFor": "outcome"
+  },
+  {
+   "key": "statistics",
+   "label": "통계분석방법",
+   "type": "textarea"
+  }
+ ],
+ "labels": {
+  "SIT": "의뢰자주도 임상시험 (SIT)",
+  "IIT": "연구자주도 임상연구 (IIT)",
+  "observational": "관찰 연구",
+  "survey": "설문 조사",
+  "human_material": "인체유래물 연구 (전향적)",
+  "stored_specimen": "보관된 검체 연구",
+  "pms": "시판후 사용성적 조사 (PMS)",
+  "medical_record": "의무기록 연구"
+ },
+ "sections": [
+  "심의의뢰 기본",
+  "연구책임자·참여연구진",
+  "생명윤리법 분류",
+  "연구대상",
+  "연구종류",
+  "연구구분·주체·규모",
+  "연구의 특성",
+  "이해충돌",
+  "지원기관·의뢰기관·담당자",
+  "연구계획 내용",
+  "예산"
+ ],
+ "_source": {
+  "matrix": "연구 종류에 따른 신규계획서 심의의뢰 시 제출 서류 목록 (2017-04-30) · irb.cnuh.com 게시글 idx=553 첨부 · 2026-09-20 E-IRB 화면 하단에 동일 표가 실재함을 확인",
+  "verified": "2026-09-19 서류 매트릭스 15/15 일치 · 2026-09-20 본문 화면 대조",
+  "exempt": "E-IRB 심의면제 의뢰서 실제 화면 (2026-09 주인 캡처). 점검표는 의뢰서 본문 안에 있다.",
+  "main": "E-IRB 연구계획심의 의뢰서(신규) 실제 화면 13장 (2026-09-20 주인 캡처) — 본문 + 전자서식 팝업 4종(요약·동의면제 점검표·시험약 개요·예산내역서)",
+  "codexReview": "2026-09-20 Codex 독립 대조(화면 16장) — 반증 12건 반영. 결과 원문 70_원천대조/61_교차검증_결과_codex.md"
+ },
+ "exemptDocs": [
+  {
+   "label": "연구계획서",
+   "method": "첨부파일",
+   "req": "required"
+  },
+  {
+   "label": "연구계획서 요약 내용",
+   "method": "전자서식",
+   "req": "required",
+   "note": "반드시 국문"
+  },
+  {
+   "label": "연구대상자 설명문 및 동의서",
+   "method": "첨부파일",
+   "req": "conditional"
+  },
+  {
+   "label": "연구대상자 동의 면제사유서",
+   "method": "전자서식",
+   "req": "conditional"
+  },
+  {
+   "label": "기타",
+   "method": "첨부파일",
+   "req": "conditional"
+  },
+  {
+   "label": "연구책임자의 최근 이력",
+   "method": "전자서식",
+   "req": "required"
+  },
+  {
+   "label": "연구비예산내역서",
+   "method": "전자서식",
+   "req": "required"
+  }
+ ],
+ "eduRule": {
+  "trialYears": 1,
+  "nonTrialYears": 3,
+  "text": "임상시험을 수행하는 연구자는 1년간 임상시험 종사자 교육 이수기록 유효 / 임상시험 외 연구를 수행하는 연구자는 3년간 연구윤리교육 이수기록 유효",
+  "_source": "E-IRB 심의의뢰서 화면 ※ 안내문 (2026-09-20 주인 캡처)"
+ },
+ "checklist": [
+  {
+   "label": "연구계획서",
+   "method": "첨부파일",
+   "mark": "req",
+   "maps": 3,
+   "versionInput": true
+  },
+  {
+   "label": "연구계획서 요약 내용",
+   "method": "전자서식",
+   "mark": "req",
+   "default": true,
+   "maps": 2,
+   "versionInput": true
+  },
+  {
+   "label": "연구대상자 설명문 및 동의서",
+   "method": "첨부파일",
+   "maps": 4,
+   "versionInput": true
+  },
+  {
+   "label": "연구대상자 동의 면제사유서",
+   "method": "전자서식",
+   "default": true,
+   "maps": 5,
+   "versionInput": true
+  },
+  {
+   "label": "증례기록서 및 설문 도구",
+   "method": "첨부파일",
+   "mark": "req",
+   "maps": 6,
+   "versionInput": true
+  },
+  {
+   "label": "임상시험자 자료집",
+   "method": "첨부파일",
+   "maps": 11,
+   "versionInput": true
+  },
+  {
+   "label": "식약처 임상시험 승인서 또는 미제출 사유서",
+   "method": "첨부파일",
+   "maps": 14,
+   "versionInput": true
+  },
+  {
+   "label": "시험약의 개요",
+   "method": "전자서식",
+   "maps": 10,
+   "versionInput": true
+  },
+  {
+   "label": "의료기기의 개요",
+   "method": "전자서식",
+   "maps": 10,
+   "versionInput": true
+  },
+  {
+   "label": "제조(수입)품목 허가증사본",
+   "method": "첨부파일",
+   "maps": 13,
+   "versionInput": true
+  },
+  {
+   "label": "연구책임자의 최근 이력",
+   "method": "전자서식",
+   "mark": "req",
+   "default": true,
+   "maps": 12,
+   "versionInput": true
+  },
+  {
+   "label": "연구대상자에게 제공되는 서류",
+   "method": "첨부파일",
+   "maps": 9,
+   "versionInput": true
+  },
+  {
+   "label": "연구대상자 모집 문건",
+   "method": "첨부파일",
+   "maps": 7,
+   "versionInput": true
+  },
+  {
+   "label": "임상시험 피해자 보상규약 및 보험증 사본",
+   "method": "첨부파일",
+   "maps": 8,
+   "versionInput": true
+  },
+  {
+   "label": "물질양도각서",
+   "method": "첨부파일",
+   "maps": null,
+   "onlyHere": true,
+   "versionInput": true
+  },
+  {
+   "label": "연구비예산내역서",
+   "method": "전자서식",
+   "mark": "req",
+   "maps": 15,
+   "versionInput": true
+  },
+  {
+   "label": "기타",
+   "method": "첨부파일",
+   "maps": null,
+   "onlyHere": true,
+   "versionInput": true
+  }
+ ],
+ "consentExemptQuiz": {
+  "title": "연구대상자 동의 면제 점검표",
+  "rule": "두 문항이 모두 「예」여야 동의 절차를 면제할 수 있습니다.",
+  "caution": "이 동의 면제요건은 연구대상의 동의를 요구하는 다른 법률을 대체하지 않습니다.",
+  "items": [
+   "연구대상자의 동의를 받는 것이 연구 진행과정에서 현실적으로 불가능하거나 연구의 타당성에 심각한 영향을 미친다고 판단되는 경우",
+   "연구대상자의 동의 거부를 추정할 만한 사유가 없고, 동의를 면제하여도 연구대상자에게 미치는 위험이 극히 낮은 경우"
+  ],
+  "_source": "E-IRB 「동의면제 점검표」 팝업 화면 (2026-09-20 주인 캡처)",
+  "answerOptions": [
+   "예",
+   "아니오"
+  ],
+  "pass": "모두 예"
+ },
+ "drugSurvey": {
+  "title": "시험약의 개요 (Drug Survey)",
+  "when": "임상시험이고 시험약(의약품류)이 있는 경우",
+  "groups": [
+   {
+    "group": "약품 식별",
+    "items": [
+     {
+      "key": "dsNameKo",
+      "label": "약품명(국문)",
+      "type": "text"
+     },
+     {
+      "key": "dsNameEn",
+      "label": "약품명(영문)",
+      "type": "text"
+     },
+     {
+      "key": "dsMaker",
+      "label": "제조회사",
+      "type": "text"
+     },
+     {
+      "key": "dsSeller",
+      "label": "판매회사",
+      "type": "text"
+     },
+     {
+      "key": "dsApproveDate",
+      "label": "허가년월일",
+      "type": "date"
+     },
+     {
+      "key": "dsReleaseDate",
+      "label": "발매년월일",
+      "type": "date"
+     },
+     {
+      "key": "dsIngredient",
+      "label": "성분 함량",
+      "type": "text"
+     },
+     {
+      "key": "dsIngredientClass",
+      "label": "성분구분",
+      "type": "multiselect",
+      "options": [
+       "수입",
+       "보험",
+       "마약",
+       "향정",
+       "독극물"
+      ]
+     },
+     {
+      "key": "dsForm",
+      "label": "성상",
+      "type": "text"
+     },
+     {
+      "key": "dsPackage",
+      "label": "포장단위",
+      "type": "text"
+     }
+    ]
+   },
+   {
+    "group": "약리·사용",
+    "items": [
+     {
+      "key": "dsPharmacology",
+      "label": "약리작용",
+      "type": "textarea"
+     },
+     {
+      "key": "dsIndication",
+      "label": "적응증",
+      "type": "textarea"
+     },
+     {
+      "key": "dsDosage",
+      "label": "용법, 용량",
+      "type": "textarea"
+     },
+     {
+      "key": "dsAdverse",
+      "label": "부작용",
+      "type": "textarea"
+     },
+     {
+      "key": "dsContra",
+      "label": "금기",
+      "type": "textarea"
+     },
+     {
+      "key": "dsPK",
+      "label": "약동학(흡수·분포·대사·배설)",
+      "type": "textarea"
+     },
+     {
+      "key": "dsInteraction",
+      "label": "약물 상호작용",
+      "type": "textarea"
+     }
+    ]
+   },
+   {
+    "group": "안전성(Safety)",
+    "items": [
+     {
+      "key": "dsToxAcute",
+      "label": "급성 독성",
+      "type": "textarea"
+     },
+     {
+      "key": "dsToxChronic",
+      "label": "만성 독성",
+      "type": "textarea"
+     },
+     {
+      "key": "dsPregnancy",
+      "label": "임부·수유부에 대한 투여 (FDA Category)",
+      "type": "textarea"
+     },
+     {
+      "key": "dsPediatric",
+      "label": "유·소아에 대한 투여",
+      "type": "textarea"
+     }
+    ]
+   },
+   {
+    "group": "안정성(Stability)",
+    "items": [
+     {
+      "key": "dsStabilityRT",
+      "label": "실온",
+      "type": "textarea"
+     },
+     {
+      "key": "dsStabilityCold",
+      "label": "냉장",
+      "type": "textarea"
+     },
+     {
+      "key": "dsStorage",
+      "label": "보관(저장방법)",
+      "type": "textarea"
+     }
+    ]
+   }
+  ],
+  "note": "주사제·시럽인 경우 용액 조제 방법과 용액 상태에서의 안정성을 함께 적습니다.",
+  "_source": "E-IRB 「시험약의 개요(Drug Survey)」 팝업 화면 (2026-09-20 주인 캡처)"
+ },
+ "budget": {
+  "items": [
+   "인건비",
+   "여비",
+   "유인물비",
+   "기술정보활동비",
+   "재료비",
+   "수용비및수수료",
+   "연구관리비",
+   "공동기관관리비",
+   "ARO 용역비"
+  ],
+  "columns": [
+   "예산목",
+   "금액(원)",
+   "산출내역"
+  ],
+  "rules": [
+   "연구대상자에게 제공되는 진료비·검사비·교통비는 「재료비」에 구체적으로 기입합니다.",
+   "소요 경비가 없으면 금액에 0을 기입합니다 — 비워 두면 안 됩니다.",
+   "인건비: 연구책임자와 공동연구자는 산정에서 제외합니다.",
+   "간접비는 계약 시 별도 산정합니다(직접비 합계만 적습니다)."
+  ],
+  "_source": "E-IRB 「연구비 예산 내역서」 팝업 전체 (2026-09-20 주인 캡처 2차 · 9행 확인)",
+  "total": "직접비 합계"
+ },
+ "submitFlow": [
+  "저장",
+  "연구자확인 및 제출",
+  "심의의뢰서출력"
+ ],
+ "prerequisiteBasicTask": {
+  "menu": "기초과제정보 > 기초과제관리",
+  "tab": "신규등록 및 상세정보",
+  "fields": [
+   {
+    "label": "연구계획명 국문",
+    "required": true
+   },
+   {
+    "label": "연구계획명 영문",
+    "required": true
+   },
+   {
+    "label": "약칭",
+    "required": false
+   }
+  ],
+  "auto": [
+   "기초번호",
+   "사용여부(기본 체크)"
+  ],
+  "buttons": [
+   "신규",
+   "저장",
+   "삭제"
+  ],
+  "siblingMenus": [
+   "기초과제관리",
+   "교육이수내역신청",
+   "연구자등록번호"
+  ],
+  "delegateTab": "권한위임",
+  "_source": "E-IRB 「기초과제관리」 화면 (2026-09-20 주인 캡처) · 주인 확인 \"국문/영문 이름만 넣고 저장하면 등록되는 형태\"",
+  "searchFields": [
+   "과제명",
+   "기초번호",
+   "IRBNo",
+   "사용여부"
+  ],
+  "listColumns": [
+   "NO",
+   "기초번호",
+   "IRBNo",
+   "과제번호",
+   "과제명",
+   "위임",
+   "이용현황: IRB",
+   "이용현황: 연구",
+   "이용현황: 실험",
+   "이용현황: CTC",
+   "이용현황: 전임"
+  ]
+ },
+ "checklistNote": "체크한 행에만 명칭(버전) 입력칸이 열린다. 화면 안내: \"각 서류의 버전을 간단하게 추가 기재 바랍니다.\"",
+ "exemptDocs_verified": "2026-09-20 E-IRB 심의면제 제출서류 목록 화면과 7/7 일치(순서·전자서식/첨부·필수 4건)",
+ "sharedWithSummary": [
+  "objective",
+  "design",
+  "targetDisease",
+  "inclusion",
+  "exclusion",
+  "dropCriteria",
+  "sampleBasis",
+  "method",
+  "efficacy",
+  "safety",
+  "statistics"
+ ],
+ "exemptFormNote": "심의면제 의뢰서 화면(2026-09-19 캡처 · 70_원천대조/80번 §2)에 실재하는 27행에 대응하는 키. 면제 경로에서는 이 밖의 항목을 「필수」로 막지 않는다 — 화면에 없는 것을 우리가 요구할 수는 없다.",
+ "requiredSource": "필수 판정은 E-IRB 화면의 빨간 세로막대를 픽셀로 검출해 정했다(2026-09-20). 막대가 없는 항목은 「필수」로 막지 않는다 — E-IRB가 요구하지 않는 것을 우리가 요구할 수는 없다. 예외: 유효성·안전성 평가는 요약 서식에서 막대가 있으나, 중재가 없는 연구에는 쓸 내용이 없어 「임상시험」 조건부로 둔다.",
+ "requiredNotWhenNote": "E-IRB 화면에는 빨간 막대가 있지만, 대상자와 접촉이 없는 연구(후향적 의무기록·보관 검체 등)에는 쓸 내용이 없는 칸이다. 칸은 그대로 띄우고 「필수」 압박만 걷는다 — 화면에서 사라지게 하지는 않는다.",
+ "summaryShowRule": {
+  "trial": "임상시험(SIT·IIT)일 때만",
+  "outcome": "임상시험 · 시판후 사용성적 조사(PMS) · 중재가 있는 연구일 때"
+ }
+}

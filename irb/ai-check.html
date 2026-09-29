@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 실행 점검</title>
+<style>
+  :root{
+    --paper:#F2F5F1; --surface:#FFFFFF; --surface-2:#E8EEE8;
+    --ink:#141E1B; --muted:#586761; --rule:#CCD6CF; --rule-soft:#E2E8E3;
+    --acc:#0E6A62; --acc-deep:#0B4F49; --acc-soft:#DDEDE9;
+    --flag:#A8421F; --flag-soft:#F7E4DC; --ok:#2C7A4B;
+    --sans:"Apple SD Gothic Neo","Pretendard","Malgun Gothic",system-ui,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+    --paper:#111614; --surface:#1A211E; --surface-2:#232B28;
+    --ink:#E8EFEA; --muted:#9BAAA3; --rule:#33403A; --rule-soft:#2A342F;
+    --acc:#4FB3A6; --acc-deep:#7FD0C4; --acc-soft:#1E2E2B;
+    --flag:#E08B6A; --flag-soft:#3A241C; --ok:#66C68C;
+  }}
+  :root[data-theme="dark"]{
+    --paper:#111614; --surface:#1A211E; --surface-2:#232B28;
+    --ink:#E8EFEA; --muted:#9BAAA3; --rule:#33403A; --rule-soft:#2A342F;
+    --acc:#4FB3A6; --acc-deep:#7FD0C4; --acc-soft:#1E2E2B;
+    --flag:#E08B6A; --flag-soft:#3A241C; --ok:#66C68C;
+  }
+  *{ box-sizing:border-box }
+  body{ margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+        line-height:1.65; padding-block:34px; padding-left:16px; padding-right:16px; }
+  .wrap{ max-width:660px; margin:0 auto; display:flex; flex-direction:column; gap:20px }
+  h1{ font-size:1.5rem; margin:0; letter-spacing:-.01em; text-wrap:balance }
+  .sub{ color:var(--muted); margin:0; font-size:.92rem }
+  .card{ background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:18px 20px }
+  .rows{ display:flex; flex-direction:column; gap:0 }
+  .row{ display:flex; gap:12px; align-items:baseline; padding:11px 0; border-bottom:1px solid var(--rule-soft) }
+  .row:last-child{ border-bottom:0 }
+  .row .k{ flex:0 0 40%; color:var(--muted); font-size:.88rem }
+  .row .v{ flex:1; font-variant-numeric:tabular-nums; word-break:break-word }
+  .mark{ font-weight:600 }
+  .yes{ color:var(--ok) } .no{ color:var(--flag) } .wait{ color:var(--muted) }
+  .verdict{ border-radius:10px; padding:16px 20px; border:1px solid var(--rule); background:var(--surface-2) }
+  .verdict.good{ background:var(--acc-soft); border-color:var(--acc) }
+  .verdict.bad{ background:var(--flag-soft); border-color:var(--flag) }
+  .verdict b{ display:block; font-size:1.05rem; margin-bottom:4px }
+  .btn{ font:inherit; font-weight:600; padding:10px 18px; border-radius:8px; cursor:pointer;
+        background:var(--acc); color:#fff; border:1px solid var(--acc-deep) }
+  .btn:disabled{ opacity:.5; cursor:default }
+  .btn.ghost{ background:transparent; color:var(--acc); border-color:var(--rule) }
+  .btnrow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:14px }
+  .bar{ height:7px; background:var(--surface-2); border-radius:99px; overflow:hidden; margin-top:12px }
+  .bar i{ display:block; height:100%; width:0; background:var(--acc); transition:width .3s }
+  .log{ font-family:var(--mono); font-size:.8rem; color:var(--muted); white-space:pre-wrap;
+        margin-top:12px; max-height:180px; overflow-y:auto }
+  .out{ background:var(--surface-2); border-radius:8px; padding:14px 16px; margin-top:14px; white-space:pre-wrap }
+  .hint{ color:var(--muted); font-size:.85rem }
+  h2{ font-size:.95rem; margin:0 0 10px }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>이 컴퓨터에서 AI가 켜지는지 봅니다</h1>
+    <p class="sub">IRB 제출 도우미의 AI 보조는 <b>이 컴퓨터 안에서</b> 돕니다.
+       연구계획서는 밖으로 나가지 않습니다 — 내려오는 것은 AI 모델이고, 올라가는 것은 없습니다.
+       이 페이지는 <b>이 컴퓨터가 그 모델을 돌릴 수 있는지</b>만 확인합니다.</p>
+  </header>
+
+  <div id="verdict" class="verdict"><b>확인하는 중입니다…</b><span id="vnote"></span></div>
+
+  <section class="card">
+    <h2>이 컴퓨터</h2>
+    <div class="rows" id="rows"></div>
+  </section>
+
+  <section class="card">
+    <h2>실제로 돌려 보기</h2>
+    <p class="hint" style="margin:0">모델을 내려받아 한 문장을 답하게 합니다.
+       처음 한 번은 <b>약 1GB</b>를 받고 몇 분 걸립니다. 받은 뒤에는 이 브라우저가 기억하므로
+       다음부터는 인터넷 없이도 열립니다.</p>
+    <div class="btnrow">
+      <button class="btn" id="run" disabled>모델 받아 시험하기</button>
+      <button class="btn ghost" id="wipe" hidden>받아 둔 모델 지우기</button>
+      <span class="hint" id="state"></span>
+    </div>
+    <div class="bar" id="barwrap" hidden><i id="bar"></i></div>
+    <div class="out" id="out" hidden></div>
+    <div class="log" id="log"></div>
+  </section>
+
+  <p class="hint">켜지지 않아도 제출 도우미는 그대로 쓰실 수 있습니다 —
+     계획서 읽기는 규칙으로 하고, AI는 서술형 칸을 돕는 자리입니다.</p>
+</div>
+
+<script>
+(function(){
+  var LIB   = (window.IRB_AI_CONFIG && window.IRB_AI_CONFIG.lib)
+            || 'https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.85/lib/index.js';
+  var MODEL = (window.IRB_AI_CONFIG && window.IRB_AI_CONFIG.model)
+            || 'Qwen2.5-1.5B-Instruct-q4f16_1-MLC';
+  var $ = function(id){ return document.getElementById(id); };
+  var facts = [], gpuOK = false, f16OK = false;
+
+  function addRow(k, v, cls){
+    var r = document.createElement('div'); r.className = 'row';
+    var a = document.createElement('div'); a.className = 'k'; a.textContent = k;
+    var b = document.createElement('div'); b.className = 'v' + (cls ? ' mark ' + cls : '');
+    b.textContent = v;
+    r.appendChild(a); r.appendChild(b); $('rows').appendChild(r);
+  }
+  function say(t){ $('log').textContent += t + '\n'; $('log').scrollTop = 1e6; }
+
+  function verdict(kind, title, note){
+    var v = $('verdict'); v.className = 'verdict ' + kind;
+    v.firstChild.textContent = title; $('vnote').textContent = note || '';
+  }
+
+  /* ── 이 컴퓨터를 살펴본다 ───────────────────────────────── */
+  addRow('브라우저', navigator.userAgent.slice(0, 120));
+  addRow('주소', location.protocol + '//' + (location.host || '(파일)'));
+  var secure = (window.isSecureContext !== false);
+  addRow('안전한 연결', secure ? '예 — 그래픽카드를 쓸 수 있습니다'
+                              : '아니오 — 브라우저가 그래픽카드를 막습니다', secure ? 'yes' : 'no');
+  if (!secure){
+    addRow('해야 할 일', 'https 주소나 localhost로 여십시오. 그냥 http로는 WebGPU가 켜지지 않습니다', 'no');
+  }
+  if (location.protocol === 'file:'){
+    addRow('알림', '파일을 직접 열면 브라우저가 외부 모듈을 막습니다 — 주소로 열어 주십시오', 'no');
+  }
+  gpuOK = !!(navigator.gpu);
+  addRow('WebGPU', gpuOK ? '있습니다' : '없습니다', gpuOK ? 'yes' : 'no');
+
+  function afterProbe(){
+    var blocked = location.protocol === 'file:' && /^https?:/.test(LIB);
+    if (!secure)     return verdict('bad', '주소가 문제입니다 — 브라우저는 멀쩡합니다',
+                       ' 안전한 연결(https)이 아니어서 브라우저가 그래픽카드를 내주지 않습니다. 이 컴퓨터에서 직접 서버를 띄워 localhost로 열거나, https 주소로 접속해 주십시오.');
+    if (!gpuOK)      return verdict('bad', 'AI를 켤 수 없습니다', ' 이 브라우저가 WebGPU를 지원하지 않습니다. Chrome이나 Edge 최신판에서 열어 주십시오.');
+    if (!f16OK)      return verdict('bad', 'AI를 켤 수 없습니다', ' 이 브라우저·그래픽카드가 반정밀도 계산(shader-f16)을 지원하지 않습니다. Chrome이나 Edge 최신판에서 열어 주십시오.');
+    if (blocked)     return verdict('bad', '주소로 열어 주십시오', ' 파일을 직접 열었을 때는 외부 모듈을 받을 수 없습니다.');
+    verdict('good', '켤 수 있습니다', ' 아래에서 실제로 돌려 보실 수 있습니다.');
+    $('run').disabled = false;
+  }
+
+  if (!gpuOK){ afterProbe(); }
+  else {
+    navigator.gpu.requestAdapter().then(function(ad){
+      if (!ad){ addRow('그래픽카드', '찾지 못했습니다', 'no'); return afterProbe(); }
+      var info = (ad.info && (ad.info.description || ad.info.vendor)) || '(이름 없음)';
+      addRow('그래픽카드', String(info));
+      f16OK = !!(ad.features && ad.features.has && ad.features.has('shader-f16'));
+      addRow('반정밀도(shader-f16)', f16OK ? '있습니다' : '없습니다', f16OK ? 'yes' : 'no');
+      var lim = ad.limits && ad.limits.maxBufferSize;
+      if (lim) addRow('최대 버퍼', Math.round(lim/1048576) + ' MB');
+      afterProbe();
+    }, function(){ addRow('그래픽카드', '확인하지 못했습니다', 'no'); afterProbe(); });
+  }
+  addRow('쓸 모델', MODEL);
+
+  /* ── 실제로 돌려 본다 ───────────────────────────────────── */
+  var eng = null, wl = null;
+  $('run').addEventListener('click', function(){
+    $('run').disabled = true; $('barwrap').hidden = false;
+    $('state').textContent = '라이브러리를 받는 중입니다…';
+    say('라이브러리: ' + LIB);
+    var t0 = Date.now();
+    import(LIB).then(function(m){
+      wl = m; say('라이브러리 올렸습니다 (' + ((Date.now()-t0)/1000).toFixed(1) + '초)');
+      return wl.hasModelInCache(MODEL).then(function(c){
+        say(c ? '모델이 이미 이 브라우저에 있습니다 — 다시 받지 않습니다'
+              : '모델을 내려받습니다 (약 1GB)');
+        if (c) $('wipe').hidden = false;
+      }, function(){ });
+    }).then(function(){
+      $('state').textContent = '모델을 준비하는 중입니다…';
+      return wl.CreateMLCEngine(MODEL, {initProgressCallback:function(r){
+        var p = Math.round((r.progress||0)*100);
+        $('bar').style.width = p + '%';
+        $('state').textContent = p + '%';
+        if (r.text) say(r.text);
+      }});
+    }).then(function(e){
+      eng = e; $('wipe').hidden = false;
+      $('state').textContent = '답을 쓰는 중입니다…';
+      say('엔진 준비 완료 (' + ((Date.now()-t0)/1000).toFixed(1) + '초)');
+      return eng.chat.completions.create({
+        messages:[
+          {role:'system', content:'한국어로만, 두 문장 안에 답하십시오.'},
+          {role:'user',   content:'다음 문장을 연구계획서의 「연구 목적」 칸에 넣을 한 문장으로 정리하십시오.\n\n「심정지 환자에게 저체온 치료를 했을 때 예후가 좋아지는지 아직 확립되지 않았으므로 이를 확인하고자 한다.」'}
+        ],
+        temperature:0.2, max_tokens:160
+      });
+    }).then(function(r){
+      var txt = (r.choices && r.choices[0] && r.choices[0].message.content) || '(빈 답)';
+      $('out').hidden = false; $('out').textContent = txt;
+      $('state').textContent = '';
+      verdict('good', 'AI가 이 컴퓨터에서 돌았습니다',
+              ' 걸린 시간 ' + ((Date.now()-t0)/1000).toFixed(1) + '초. 위 답은 이 컴퓨터가 만든 것이고, 아무것도 밖으로 보내지 않았습니다.');
+      say('끝났습니다.');
+    }).catch(function(e){
+      $('state').textContent = '';
+      var m = (e && (e.message || e.code)) || String(e);
+      say('🔴 실패: ' + m);
+      verdict('bad', '돌리지 못했습니다', ' ' + m);
+      $('run').disabled = false;
+    });
+  });
+
+  $('wipe').addEventListener('click', function(){
+    if (!wl || !wl.deleteModelAllInfoInCache) return;
+    if (!window.confirm('받아 둔 모델을 지웁니다. 다시 쓰려면 또 내려받아야 합니다.\n계속하시겠습니까?')) return;
+    wl.deleteModelAllInfoInCache(MODEL).then(function(){
+      say('지웠습니다.'); $('wipe').hidden = true;
+    }, function(e){ say('지우지 못했습니다: ' + e); });
+  });
+})();
+</script>
+</body>
+</html>
